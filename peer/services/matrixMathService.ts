@@ -27,7 +27,7 @@ export const matrixMathService = () => {
   const generateToeplitzMatrix = (binaryArray: number[]) => {
     const firstRow = binaryArray.slice(0, binaryArray.length / 2 + 1);
     const restRows = binaryArray.slice(binaryArray.length / 2 + 1);
-    let matrix = [firstRow];
+    const matrix = [firstRow];
     for (let row = 0; row < restRows.length; row++) {
       const emptyRow = new Array(restRows.length).fill(0);
       matrix.push([restRows[row], ...emptyRow]);
@@ -50,7 +50,7 @@ export const matrixMathService = () => {
   };
 
   const createMatrixFromStringAsBinary = (stringAsBinary: string) => {
-    let matrix = [];
+    const matrix = [];
     for (let i=0; i < stringAsBinary.length; i++) {
       matrix[i] = [Number(stringAsBinary[i])];
     }

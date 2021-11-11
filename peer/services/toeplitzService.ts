@@ -1,11 +1,11 @@
 import { matrix, multiply } from 'mathjs';
 import { Block } from '../types';
 import { generateRandomBinaryArray } from '../utils/generateRandomBinaryArray';
-
 import { checkIfToeplitzMatrixIsEstablished, sendTopelitzMatrix } from './api';
 import { nodeService } from './nodeService';
 import { OneTimePadMapping } from './oneTimePadService';
 import { matrixMathService } from './matrixMathService';
+import { log } from '../utils/log';
 
 export interface ToeplitzMatrixMapping {
   toeplitzMatrix: number[][];
@@ -31,6 +31,7 @@ export const toeplitzService = () => {
   } = matrixMathService();
 
   const establishToeplitzMatrix = async () => {
+    log('Establishing Toeplitz matrix with peers - transaction');
     for (const nodeHash of contiguousNodesHashes) {
       const { body } = await checkIfToeplitzMatrixIsEstablished(
         nodeHash,
@@ -69,13 +70,14 @@ export const toeplitzService = () => {
   };
 
   const checkIfToeplitzAsStringExists = (nodeHash: string) => {
+    log('Checking if Toeplitz matrix exists');
     const toeplitzObjectFound = teoplitzMatrixesMapping.filter(
       (toeplitzMap) => toeplitzMap.nodeHash === nodeHash
     )[0];
     return toeplitzObjectFound?.toeplitzMatrix;
   };
 
-  const countToeplitzHash = (
+  const computeToeplitzHash = (
     data: string,
     toeplitzMatrix: number[][],
     oneTimePad: number[]
@@ -94,26 +96,29 @@ export const toeplitzService = () => {
     oneTimePadMapping: OneTimePadMapping[],
     blockProposal: Block,
   ) => {
+    log('Calculating Toeplitz Hash');
     const { toeplitzMatrix } = teoplitzMatrixesMapping[0];
     const { oneTimePad } = oneTimePadMapping[0];
-    return countToeplitzHash(blockProposal.data, toeplitzMatrix, oneTimePad)
+    return computeToeplitzHash(blockProposal.data, toeplitzMatrix, oneTimePad)
   };
 
   const generateToeplitzHash = (blockProposal: Block) => {
     const binaryArray = generateRandomBinaryArray(69);
     const toeplitzMatrix = generateToeplitzMatrix(binaryArray);
     const oneTimePad = generateRandomBinaryArray(35);
-    return countToeplitzHash(blockProposal.data, toeplitzMatrix, oneTimePad);
+    return computeToeplitzHash(blockProposal.data, toeplitzMatrix, oneTimePad);
   }
 
   const verifyToeplitzGroupSignature = (
     toeplitzGroupSignature: string[],
     toeplitzHash: string
   ) => {
+    log('Verifying block proposal signature');
     return toeplitzGroupSignature.some(hash => hash === toeplitzHash);
   };
 
   const addToeplitzMatrix = (toeplitzMatrix: number[][], nodeHash: string) => {
+    log('Adding established Toeplitz matrix');
     teoplitzMatrixesMapping.push({
       nodeHash,
       toeplitzMatrix
@@ -127,11 +132,12 @@ export const toeplitzService = () => {
     oneTimePadMapping: OneTimePadMapping[],
     transaction: string
   ) => {
+    log('Generating Toeplitz Group Signature');
     teoplitzMatrixesMapping.forEach((toeplitzMap) => {
       const oneTimeMap = oneTimePadMapping.filter(
         (map) => map.nodeHash === toeplitzMap.nodeHash
       )[0];
-      const toeplitzHash = countToeplitzHash(
+      const toeplitzHash = computeToeplitzHash(
         transaction,
         toeplitzMap.toeplitzMatrix,
         oneTimeMap.oneTimePad
@@ -142,10 +148,12 @@ export const toeplitzService = () => {
   };
 
   const addToeplitzHashToGroupSignature = (toeplitzHash: string) => {
+    log('Adding Toeplitz Hash to Toeplitz Group Signature');
     toeplitzGroupSignature.push(toeplitzHash);
   };
 
   const storeToeplitzGroupSignature = (toeplitzHashesReceived: string[]) => {
+    log('Storing Toeplitz Group Signature');
     toeplitzHashesReceived.forEach(toeplitzHash => toeplitzGroupSignature.push(toeplitzHash));
   };
 

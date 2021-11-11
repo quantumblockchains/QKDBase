@@ -2,6 +2,7 @@ import { Block } from '../types';
 import { computeBlockHash } from '../utils/computeBlockHash';
 import { sendBlockProposal } from './api';
 import { nodeService } from './nodeService';
+import { log } from '../utils/log';
 
 export const blockService = () => {
   let blockProposal: Block | undefined = undefined;
@@ -13,17 +14,20 @@ export const blockService = () => {
     transaction: string,
     lastBlock: Block,
   ) => {
+    log('Generating block proposal');
     const blockProposal = generateBlockProposal(transaction, lastBlock);
     setBlockProposal(blockProposal);
   };
 
   const sendBlockProposalToAllPeers = async (toeplitzGroupSignature: string[]) => {
+    log('Sending block proposal to peers');
     for (const nodeHash of contiguousNodesHashes) {
       await sendBlockProposal(nodeHash, blockProposal, toeplitzGroupSignature);
     }
   };
 
   const setBlockProposal = (block: Block) => {
+    log('Storing block proposal');
     if (!blockProposal) {
       blockProposal = block;
     } else if (blockProposal && !compareBlocks(blockProposal, block)) {

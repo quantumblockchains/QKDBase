@@ -4,9 +4,6 @@
   "license": "MIT",
   "workspaces": ["client", "peer"],
   "private": true,
-  "devDependencies": {
-    "typescript": "^4.0.5"
-  },
   "scripts": {
     "build": "yarn workspace client build && yarn workspace peer build",
     "build:docker": "yarn workspace client build:docker && yarn workspace peer build:docker",

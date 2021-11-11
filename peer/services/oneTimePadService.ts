@@ -1,4 +1,5 @@
 import { generateRandomBinaryArray } from '../utils/generateRandomBinaryArray';
+import { log } from '../utils/log';
 import { sendOneTimePad, checkIfOneTimePadIsEstablished } from './api';
 import { nodeService } from './nodeService';
 
@@ -15,6 +16,7 @@ export const oneTimePadService = () => {
   const myNodeHash = getMyNodeHash();
 
   const establishOneTimePad = async () => {
+    log('Establishing one time pad with peers - transaction');
     for (const nodeHash of contiguousNodesHashes) {
       const { body } = await checkIfOneTimePadIsEstablished(
         nodeHash,
@@ -49,6 +51,7 @@ export const oneTimePadService = () => {
   };
 
   const checkIfOneTimePadExists = (nodeHash: string) => {
+    log('Checking if one time pad exists');
     const toeplitzObjectFound = oneTimePadMapping.filter(
       (oneTimePadMap) => oneTimePadMap.nodeHash === nodeHash
     )[0];
@@ -56,6 +59,7 @@ export const oneTimePadService = () => {
   };
 
   const addOneTimePad = (oneTimePad: number[], nodeHash: string) => {
+    log('Adding established one time pad');
     if (!oneTimePadMapping.some(oneTimePadMap => oneTimePadMap.nodeHash === nodeHash)) {
       oneTimePadMapping.push({
         nodeHash,

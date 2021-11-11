@@ -1,7 +1,7 @@
 import { Block } from '../types';
 import { computeProposalHash } from '../utils/computeProposalHash';
-import { sendHashedTransaction } from './api';
 import { nodeService } from './nodeService';
+import { log } from '../utils/log';
 
 export const transactionService = () => {
   let transactionHash: string | undefined;
@@ -9,10 +9,13 @@ export const transactionService = () => {
   const { getMyNodeHash } = nodeService();
   const myNodeHash = getMyNodeHash();
 
-  const calculateTransactionHash = (blockProposal: Block, toeplitzHash: string) =>
-    computeProposalHash(toeplitzHash, myNodeHash, blockProposal.data);
+  const calculateTransactionHash = (blockProposal: Block, toeplitzHash: string) => {
+    log('Calculating my hashed transaction');
+    return computeProposalHash(toeplitzHash, myNodeHash, blockProposal.data);
+  }
 
   const storeTransactionHash = (hashedTransaction: string) => {
+    log('Storing my hashed transaction');
     transactionHash = hashedTransaction;
   }
 
