@@ -1,17 +1,17 @@
 import { generateRandomBinaryArray } from '../utils/generateRandomBinaryArray';
 import { log } from '../utils/log';
-import { sendOneTimePad, checkIfOneTimePadIsEstablished } from './api';
-import { nodeService } from './nodeService';
+import { sendOneTimePad, checkIfOneTimePadIsEstablished } from './http.service';
+import { nodeService } from './node.service';
 
 export interface OneTimePadMapping {
   oneTimePad: number[];
   nodeHash: string;
 }
 
-export const oneTimePadService = () => {
+export const oneTimePadService = (() => {
   let oneTimePadMapping = [] as OneTimePadMapping[];
 
-  const { getContiguousNodesHashes, getMyNodeHash } = nodeService();
+  const { getContiguousNodesHashes, getMyNodeHash } = nodeService;
   const contiguousNodesHashes = getContiguousNodesHashes();
   const myNodeHash = getMyNodeHash();
 
@@ -81,7 +81,7 @@ export const oneTimePadService = () => {
     clearOneTimePads,
     getOneTimePadMapping,
   };
-};
+})();
 
 const compareOneTimePads = (leftOneTimePad: number[], rightOneTimePad: number[]) => {
   if (!leftOneTimePad || !rightOneTimePad) {

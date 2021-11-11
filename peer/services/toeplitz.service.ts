@@ -1,10 +1,10 @@
 import { matrix, multiply } from 'mathjs';
 import { Block } from '../types';
 import { generateRandomBinaryArray } from '../utils/generateRandomBinaryArray';
-import { checkIfToeplitzMatrixIsEstablished, sendTopelitzMatrix } from './api';
-import { nodeService } from './nodeService';
-import { OneTimePadMapping } from './oneTimePadService';
-import { matrixMathService } from './matrixMathService';
+import { checkIfToeplitzMatrixIsEstablished, sendTopelitzMatrix } from './http.service';
+import { nodeService } from './node.service';
+import { OneTimePadMapping } from './oneTimePad.service';
+import { matrixMathService } from './matrixMath.service';
 import { log } from '../utils/log';
 
 export interface ToeplitzMatrixMapping {
@@ -12,11 +12,11 @@ export interface ToeplitzMatrixMapping {
   nodeHash: string;
 }
 
-export const toeplitzService = () => {
+export const toeplitzService = (() => {
   const teoplitzMatrixesMapping = [] as ToeplitzMatrixMapping[];
   let toeplitzGroupSignature = [] as string[];
 
-  const { getContiguousNodesHashes, getMyNodeHash } = nodeService();
+  const { getContiguousNodesHashes, getMyNodeHash } = nodeService;
   const contiguousNodesHashes = getContiguousNodesHashes();
   const myNodeHash = getMyNodeHash();
 
@@ -92,11 +92,11 @@ export const toeplitzService = () => {
   }
 
   const calculateToeplitzHash = (
-    teoplitzMatrixesMapping: ToeplitzMatrixMapping[],
     oneTimePadMapping: OneTimePadMapping[],
     blockProposal: Block,
-  ) => {
+    ) => {
     log('Calculating Toeplitz Hash');
+    const teoplitzMatrixesMapping = getToeplitzMapping();
     const { toeplitzMatrix } = teoplitzMatrixesMapping[0];
     const { oneTimePad } = oneTimePadMapping[0];
     return computeToeplitzHash(blockProposal.data, toeplitzMatrix, oneTimePad)
@@ -128,11 +128,11 @@ export const toeplitzService = () => {
   const getToeplitzMapping = () => teoplitzMatrixesMapping;
 
   const generateToeplitzGroupSignature = (
-    teoplitzMatrixesMapping: ToeplitzMatrixMapping[],
     oneTimePadMapping: OneTimePadMapping[],
     transaction: string
-  ) => {
+    ) => {
     log('Generating Toeplitz Group Signature');
+    const teoplitzMatrixesMapping = getToeplitzMapping();
     teoplitzMatrixesMapping.forEach((toeplitzMap) => {
       const oneTimeMap = oneTimePadMapping.filter(
         (map) => map.nodeHash === toeplitzMap.nodeHash
@@ -177,4 +177,4 @@ export const toeplitzService = () => {
     getToeplitzGroupSignature,
     clearToeplitzGroupSignature,
   };
-};
+})();

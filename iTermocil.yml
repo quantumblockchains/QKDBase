@@ -1,6 +1,6 @@
 windows:
-  - name: sample-two-panes
-    root: ~/Projects/QuantumBlockchain/
+  - name: all-peers
+    root: .
     layout: tiled
     panes:
       - docker logs -f 313c7cdbb127b808387486993859a2be864711cbf80f1ea89038bd09

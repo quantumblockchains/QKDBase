@@ -1,13 +1,13 @@
 import { Block } from '../types';
 import { computeBlockHash } from '../utils/computeBlockHash';
-import { sendBlockProposal } from './api';
-import { nodeService } from './nodeService';
+import { sendBlockProposal } from './http.service';
+import { nodeService } from './node.service';
 import { log } from '../utils/log';
 
-export const blockService = () => {
+export const blockService = (() => {
   let blockProposal: Block | undefined = undefined;
 
-  const { getContiguousNodesHashes } = nodeService();
+  const { getContiguousNodesHashes } = nodeService;
   const contiguousNodesHashes = getContiguousNodesHashes();
 
   const createBlockProposal = (
@@ -48,7 +48,7 @@ export const blockService = () => {
     getBlockProposal,
     clearBlockProposal,
   };
-};
+})();
 
 export const generateBlockProposal = (
   transaction: string,

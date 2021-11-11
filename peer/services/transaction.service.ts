@@ -1,12 +1,12 @@
 import { Block } from '../types';
 import { computeProposalHash } from '../utils/computeProposalHash';
-import { nodeService } from './nodeService';
+import { nodeService } from './node.service';
 import { log } from '../utils/log';
 
-export const transactionService = () => {
+export const transactionService = (() => {
   let transactionHash: string | undefined;
 
-  const { getMyNodeHash } = nodeService();
+  const { getMyNodeHash } = nodeService;
   const myNodeHash = getMyNodeHash();
 
   const calculateTransactionHash = (blockProposal: Block, toeplitzHash: string) => {
@@ -31,4 +31,4 @@ export const transactionService = () => {
     getTransactionHash,
     clearTransactionHash,
   };
-};
+})();

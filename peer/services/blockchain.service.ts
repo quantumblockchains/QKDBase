@@ -1,10 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-
 import { Block } from '../types';
 import { computeBlockHash } from '../utils/computeBlockHash';
 
-export const blockchainService = () => {
+export const blockchainService = (() => {
   const loadBlocksFromFiles = () => {
     const dirname = path.join(__dirname, '../blocks/');
     fs.readdir(dirname, (error, filenames) => {
@@ -63,7 +62,7 @@ export const blockchainService = () => {
   };
 
   return { getLastBlock, addBlock, saveBlock };
-};
+})();
 
 const createGenesisBlock = (addBlock: (block: Block) => void) => {
   const index = 0;

@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const nodeService = () => {
+export const nodeService = (() => {
   const nodes = [
     process.env.MY_PEER_HASH,
     process.env.SECOND_PEER_HASH,
@@ -22,4 +22,4 @@ export const nodeService = () => {
   const getAllNodesHashes = () => nodes;
 
   return { getContiguousNodesHashes, getMyNodeHash, getAllNodesHashes };
-};
+})();

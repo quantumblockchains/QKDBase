@@ -1,14 +1,14 @@
 import { Block } from '../types';
 import { computeProposalHash } from '../utils/computeProposalHash';
-import { sendAddBlockToChain, sendAddVote, sendVerifyAndVote } from './api';
-import { nodeService } from './nodeService';
+import { sendAddBlockToChain, sendAddVote, sendVerifyAndVote } from './http.service';
+import { nodeService } from './node.service';
 import { log } from '../utils/log';
 
-export const votingService = () => {
+export const votingService = (() => {
   let votes = 0;
   let isVoteEnded = false;
 
-  const { getAllNodesHashes } = nodeService();
+  const { getAllNodesHashes } = nodeService;
   const allNodesHashes = getAllNodesHashes();
 
   const initializeVote = async (peerQueue: string[], transactionHash: string) => {
@@ -76,4 +76,4 @@ export const votingService = () => {
     setIsVoteEnded,
     getIsVoteEnded,
   };
-};
+})();
