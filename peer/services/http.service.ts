@@ -60,6 +60,21 @@ export const sendBlockProposal = async (
   return response;
 };
 
+export const sendDataProposal = async (
+  nodeHash: string,
+  dataProposal: string,
+  toeplitzGroupSignature: string[]
+) => {
+  const url = `http://${nodeHash}:3016/receive-data-proposal`;
+  const response = await got.post(url, {
+    json: {
+      dataProposal,
+      toeplitzGroupSignature,
+    },
+  });
+  return response;
+};
+
 export const checkIfOneTimePadIsEstablished = async (
   nodeHash: string,
   myNodeHash: string
@@ -97,6 +112,12 @@ export const sendAddVote = async (nodeHash: string) => {
 
 export const sendAddBlockToChain = async (nodeHash: string) => {
   const url = `http://${nodeHash}:3016/add-block-to-chain`;
+  const response = await got.post(url);
+  return response;
+};
+
+export const sendVotingFinished = async (nodeHash: string) => {
+  const url = `http://${nodeHash}:3016/voting-finished`;
   const response = await got.post(url);
   return response;
 };

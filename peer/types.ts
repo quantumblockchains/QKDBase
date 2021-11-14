@@ -5,3 +5,8 @@ export interface Block {
   timestamp: number;
   hash: string
 }
+
+export interface DataProposalRequest {
+  dataProposal: string;
+  toeplitzGroupSignature: string[];
+}

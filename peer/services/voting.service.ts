@@ -1,6 +1,5 @@
-import { Block } from '../types';
 import { computeProposalHash } from '../utils/computeProposalHash';
-import { sendAddBlockToChain, sendAddVote, sendVerifyAndVote } from './http.service';
+import { sendVotingFinished, sendAddVote, sendVerifyAndVote } from './http.service';
 import { nodeService } from './node.service';
 import { log } from '../utils/log';
 
@@ -23,13 +22,13 @@ export const votingService = (() => {
   };
 
   const verifyVote = (
-    blockProposal: Block,
+    dataProposal: string,
     toeplitzGroupSignature: string[],
     transactionHash: string,
   ) => {
     log('Verifying vote');
     return allNodesHashes.some(nodeHash => {
-      const hashedTransactions = toeplitzGroupSignature.map(hash => computeProposalHash(hash, nodeHash, blockProposal.data));
+      const hashedTransactions = toeplitzGroupSignature.map(hash => computeProposalHash(hash, nodeHash, dataProposal));
       return hashedTransactions.some(hash => transactionHash === hash);
     });
   };
@@ -48,12 +47,12 @@ export const votingService = (() => {
     }
   };
 
-  const sendAddBlockToChainToAllPeers = async () => {
-    log('Sending request to add block to chain');
+  const sendVotingFinishedToAllPeers = async () => {
+    log('Sending request to finish voting');
     for (const nodeHash of allNodesHashes) {
-      await sendAddBlockToChain(nodeHash);
+      await sendVotingFinished(nodeHash);
     }
-  };
+  }
 
   const clearVotes = () => {
     votes = 0;
@@ -71,7 +70,7 @@ export const votingService = (() => {
     getVotes,
     verifyVote,
     sendAddVoteAllPeers,
-    sendAddBlockToChainToAllPeers,
+    sendVotingFinishedToAllPeers,
     clearVotes,
     setIsVoteEnded,
     getIsVoteEnded,

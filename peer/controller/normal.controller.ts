@@ -3,18 +3,19 @@ import { shuffleArray } from '../utils/shuffleArray';
 import { wait } from '../utils/wait';
 import { log } from '../utils/log';
 import { Services } from '../services/services';
+import { DataProposalRequest } from '../types';
 
-export const getNormalRoutes = (services: Services) => {
+export const buildNormalRoutes = (services: Services, onSuccess: () => void, onError: () => void) => {
   const router = express.Router();
   const jsonParser = express.json();
 
-  const { blockService, blockchainService, nodeService, oneTimePadService, toeplitzService, transactionService, votingService } = services;
+  const { dataService, nodeService, oneTimePadService, toeplitzService, transactionService, votingService } = services;
   
   const clearEverything = () => {
     toeplitzService.clearToeplitzGroupSignature();
     oneTimePadService.clearOneTimePads();
     transactionService.clearTransactionHash();
-    blockService.clearBlockProposal();
+    dataService.clearDataProposal();
     votingService.clearVotes();
   };
   
@@ -24,15 +25,15 @@ export const getNormalRoutes = (services: Services) => {
   };
   
   const generateHashedTransaction = (toeplitzHash: string) => {
-    const blockProposal = blockService.getBlockProposal();
-    const calculatedTransactionHash = transactionService.calculateTransactionHash(blockProposal, toeplitzHash);
+    const dataProposal = dataService.getDataProposal();
+    const calculatedTransactionHash = transactionService.calculateTransactionHash(dataProposal, toeplitzHash);
     transactionService.storeTransactionHash(calculatedTransactionHash);
     return calculatedTransactionHash;
   }
   
   const addProposalPeerToToeplitzGroupSignature = () => {
-    const blockProposal = blockService.getBlockProposal();
-    const toeplitzHash = toeplitzService.generateToeplitzHash(blockProposal);
+    const dataProposal = dataService.getDataProposal();
+    const toeplitzHash = toeplitzService.generateToeplitzHash(dataProposal);
     const calculatedTransactionHash = generateHashedTransaction(toeplitzHash);
     toeplitzService.addToeplitzHashToGroupSignature(toeplitzHash);
     return calculatedTransactionHash;
@@ -48,7 +49,7 @@ export const getNormalRoutes = (services: Services) => {
   const waitForDataToPropagate = async () => {
     log('Waiting for data to propagate');
     await wait(() => toeplitzService.getToeplitzGroupSignature().length === 4, 500);
-    await wait(() => !!blockService.getBlockProposal(), 500);
+    await wait(() => !!dataService.getDataProposal(), 500);
   };
   
   
@@ -60,43 +61,44 @@ export const getNormalRoutes = (services: Services) => {
     }
     try {
       votingService.setIsVoteEnded(false);
-      const { transaction } = req.body;
+      const { transaction }: { transaction: string } = req.body;
       if (transaction.length !== 5) {
         throw Error('Invalid transaction length');
       }
       await establishNecessaryData();
       const oneTimePadMapping = oneTimePadService.getOneTimePadMapping();
       const toeplitzGroupSignature = toeplitzService.generateToeplitzGroupSignature(oneTimePadMapping, transaction);
-      blockService.createBlockProposal(transaction, blockchainService.getLastBlock());
+      dataService.setDataProposal(transaction);
       const calculatedTransactionHash = addProposalPeerToToeplitzGroupSignature();
-      await blockService.sendBlockProposalToAllPeers(toeplitzGroupSignature);
+      await dataService.sendDataProposalToAllPeers(toeplitzGroupSignature);
       startVoting(calculatedTransactionHash);
     } catch (error) {
       console.error(error);
     }
-    res.send('Block proposal sent to all peers');
+    res.send('Data proposal sent to all peers');
   });
   
-  router.post('/receive-block-proposal', jsonParser, async (req, res) => {
-    log('Received block proposal');
+  router.post('/receive-data-proposal', jsonParser, async (req, res) => {
+    log('Received data proposal');
     try {
       votingService.setIsVoteEnded(false);
-      const { blockProposal, toeplitzGroupSignature } = req.body;
+      const { dataProposal, toeplitzGroupSignature }: DataProposalRequest = req.body;
       const oneTimePadMapping = oneTimePadService.getOneTimePadMapping();
-      const calculatedToeplitzHash = toeplitzService.calculateToeplitzHash(oneTimePadMapping, blockProposal);
+      const calculatedToeplitzHash = toeplitzService.calculateToeplitzHash(oneTimePadMapping, dataProposal);
       const isVerified = toeplitzService.verifyToeplitzGroupSignature(toeplitzGroupSignature, calculatedToeplitzHash);
       if (isVerified) {
-        blockService.setBlockProposal(blockProposal);
+        dataService.setDataProposal(dataProposal);
         toeplitzService.storeToeplitzGroupSignature(toeplitzGroupSignature);
         const calculatedTransactionHash = generateHashedTransaction(calculatedToeplitzHash);
         startVoting(calculatedTransactionHash);
       } else {
-        throw Error('Invalid block proposal signature');
+        throw Error('Invalid data proposal signature');
       }
     } catch (error) {
       console.error(error);
+      onError();
     }
-    res.send('Received block proposal');
+    res.send('Received data proposal');
   });
   
   router.post('/verify-and-vote', jsonParser, async (req, res) => {
@@ -104,14 +106,14 @@ export const getNormalRoutes = (services: Services) => {
     try {
       const { peerQueue, transactionHash } = req.body;
       await waitForDataToPropagate();
-      const blockProposal = blockService.getBlockProposal();
+      const dataProposal = dataService.getDataProposal();
       const toeplitzGroupSignature = toeplitzService.getToeplitzGroupSignature();
-      const isVerified = votingService.verifyVote(blockProposal, toeplitzGroupSignature, transactionHash);
+      const isVerified = votingService.verifyVote(dataProposal, toeplitzGroupSignature, transactionHash);
       if (isVerified) {
         log('Vote verified');
         await votingService.sendAddVoteAllPeers();
         if (votingService.getVotes() >= 12) {
-          await votingService.sendAddBlockToChainToAllPeers();
+          await votingService.sendVotingFinishedToAllPeers();
         } else {
           if (peerQueue.length !== 0) {
             votingService.initializeVote(peerQueue, transactionHash);
@@ -122,6 +124,7 @@ export const getNormalRoutes = (services: Services) => {
       }
     } catch (error) {
       console.error(error);
+      onError();
     }
     res.send('Voted');
   });
@@ -129,46 +132,23 @@ export const getNormalRoutes = (services: Services) => {
   router.post('/add-vote', async (req, res) => {
     log('Received add vote request');
     if (votingService.getIsVoteEnded()) {
-      res.send('Vote ended');
+      res.send('Voting ended');
       return;
     }
-    try {
-      votingService.addVote();
-    } catch (error) {
-      console.error(error);
-    }
+    votingService.addVote();
     res.send('Added vote');
   });
   
-  router.post('/add-block-to-chain', (req, res) => {
-    log('Received add block to chain request');
+  router.post('/voting-finished', (req, res) => {
+    log('Received voting finished request');
     if (votingService.getIsVoteEnded()) {
-      res.send('Vote ended');
+      res.send('Voting ended');
       return;
     }
-    try {
-      votingService.setIsVoteEnded(true);
-      const blockProposal = blockService.getBlockProposal();
-      blockchainService.addBlock(blockProposal);
-      blockchainService.saveBlock(blockProposal);
-      log('\x1b[31m CONSENSUS ACHIEVED \x1b[0m');
-      clearEverything();
-    } catch (error) {
-      console.error(error);
-    }
-    res.send('Added block to chain');
-  });
-  
-  router.get('/show-last-block', (req, res) => {
-    res.send(blockchainService.getLastBlock());
-  });
-  
-  router.get('/show-block-proposal', (req, res) => {
-    res.send(blockService.getBlockProposal());
-  });
-  
-  router.get('/show-hashed-transaction', (req, res) => {
-    res.send(transactionService.getTransactionHash());
+    votingService.setIsVoteEnded(true);
+    onSuccess();
+    clearEverything();
+    res.send('Voting succeeded');
   });
 
   return router;

@@ -17,7 +17,6 @@
     "typescript": "^4.0.5"
   },
   "scripts": {
-    "prebuild": "mkdir -p blocks",
     "build": "rm -rf ./dist && tsc --outDir ./dist",
     "build:docker": "yarn build && docker build -t peer .",
     "start:docker": "docker run -p 3014:3016 -p 3015:3017 -d peer",

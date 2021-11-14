@@ -1,5 +1,4 @@
 import { matrix, multiply } from 'mathjs';
-import { Block } from '../types';
 import { generateRandomBinaryArray } from '../utils/generateRandomBinaryArray';
 import { checkIfToeplitzMatrixIsEstablished, sendTopelitzMatrix } from './http.service';
 import { nodeService } from './node.service';
@@ -93,27 +92,27 @@ export const toeplitzService = (() => {
 
   const calculateToeplitzHash = (
     oneTimePadMapping: OneTimePadMapping[],
-    blockProposal: Block,
+    dataProposal: string,
     ) => {
     log('Calculating Toeplitz Hash');
     const teoplitzMatrixesMapping = getToeplitzMapping();
     const { toeplitzMatrix } = teoplitzMatrixesMapping[0];
     const { oneTimePad } = oneTimePadMapping[0];
-    return computeToeplitzHash(blockProposal.data, toeplitzMatrix, oneTimePad)
+    return computeToeplitzHash(dataProposal, toeplitzMatrix, oneTimePad)
   };
 
-  const generateToeplitzHash = (blockProposal: Block) => {
+  const generateToeplitzHash = (dataProposal: string) => {
     const binaryArray = generateRandomBinaryArray(69);
     const toeplitzMatrix = generateToeplitzMatrix(binaryArray);
     const oneTimePad = generateRandomBinaryArray(35);
-    return computeToeplitzHash(blockProposal.data, toeplitzMatrix, oneTimePad);
+    return computeToeplitzHash(dataProposal, toeplitzMatrix, oneTimePad);
   }
 
   const verifyToeplitzGroupSignature = (
     toeplitzGroupSignature: string[],
     toeplitzHash: string
   ) => {
-    log('Verifying block proposal signature');
+    log('Verifying data proposal signature');
     return toeplitzGroupSignature.some(hash => hash === toeplitzHash);
   };
 

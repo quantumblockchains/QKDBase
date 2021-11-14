@@ -1,4 +1,3 @@
-import { Block } from '../types';
 import { computeProposalHash } from '../utils/computeProposalHash';
 import { nodeService } from './node.service';
 import { log } from '../utils/log';
@@ -9,9 +8,9 @@ export const transactionService = (() => {
   const { getMyNodeHash } = nodeService;
   const myNodeHash = getMyNodeHash();
 
-  const calculateTransactionHash = (blockProposal: Block, toeplitzHash: string) => {
+  const calculateTransactionHash = (dataProposal: string, toeplitzHash: string) => {
     log('Calculating my hashed transaction');
-    return computeProposalHash(toeplitzHash, myNodeHash, blockProposal.data);
+    return computeProposalHash(toeplitzHash, myNodeHash, dataProposal);
   }
 
   const storeTransactionHash = (hashedTransaction: string) => {
