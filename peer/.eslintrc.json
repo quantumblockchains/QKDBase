@@ -1,8 +1,7 @@
-module.exports = {
+{
     "env": {
-        "browser": true,
         "es2021": true,
-        "node": true,
+        "node": true
     },
     "extends": [
         "eslint:recommended",
@@ -16,6 +15,8 @@ module.exports = {
     "plugins": [
         "@typescript-eslint"
     ],
+    "ignorePatterns": ["dist/*"],
     "rules": {
+        "max-len": ["error", { "code": 120 }]
     }
-};
+}
