@@ -12,7 +12,7 @@ export interface ToeplitzMatrixMapping {
 }
 
 export const toeplitzService = (() => {
-  const teoplitzMatrixesMapping = [] as ToeplitzMatrixMapping[];
+  let teoplitzMatrixesMapping = [] as ToeplitzMatrixMapping[];
   let toeplitzGroupSignature = [] as string[];
 
   const { getContiguousNodesHashes, getMyNodeHash } = nodeService;
@@ -160,7 +160,11 @@ export const toeplitzService = (() => {
 
   const clearToeplitzGroupSignature = () => {
     toeplitzGroupSignature = [];
-  }
+  };
+
+  const clearToeplitzMatrixesMapping = () => {
+    teoplitzMatrixesMapping = [];
+  };
 
   return {
     establishToeplitzMatrix,
@@ -175,5 +179,6 @@ export const toeplitzService = (() => {
     storeToeplitzGroupSignature,
     getToeplitzGroupSignature,
     clearToeplitzGroupSignature,
+    clearToeplitzMatrixesMapping,
   };
 })();

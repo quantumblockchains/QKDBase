@@ -13,6 +13,7 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
   
   const clearEverything = () => {
     toeplitzService.clearToeplitzGroupSignature();
+    toeplitzService.clearToeplitzMatrixesMapping();
     oneTimePadService.clearOneTimePads();
     transactionService.clearTransactionHash();
     dataService.clearDataProposal();
