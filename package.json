@@ -2,10 +2,10 @@
   "name": "quantum_blockchain",
   "version": "1.0.0",
   "license": "MIT",
-  "workspaces": ["client", "peer"],
+  "workspaces": ["client", "peer", "bootstrapNode"],
   "private": true,
   "scripts": {
-    "build": "yarn workspace client build && yarn workspace peer build",
+    "build": "yarn workspace client build && yarn workspace peer build && yarn workspace bootstrapNode build",
     "build:docker": "yarn workspace client build:docker && yarn workspace peer build:docker",
     "build:multiple-dockers": "yarn build && docker-compose build",
     "start:multiple-dockers": "docker-compose up -d",

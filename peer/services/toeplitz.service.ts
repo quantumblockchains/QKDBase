@@ -156,7 +156,7 @@ export const toeplitzService = (() => {
     toeplitzHashesReceived.forEach(toeplitzHash => toeplitzGroupSignature.push(toeplitzHash));
   };
 
-  const getToeplitzGroupSignature = () => toeplitzGroupSignature;
+  const getToeplitzGroupSignature = () => [...toeplitzGroupSignature];
 
   const clearToeplitzGroupSignature = () => {
     toeplitzGroupSignature = [];

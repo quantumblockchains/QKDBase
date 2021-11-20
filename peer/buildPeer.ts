@@ -1,8 +1,8 @@
 import express from 'express';
-import { buildNormalRoutes } from '../controller/normal.controller';
-import { getQuantumRoutes } from '../controller/quantum.controller';
-import { services } from '../services/services';
-import { log } from '../utils/log';
+import { buildNormalRoutes } from './controller/normal.controller';
+import { getQuantumRoutes } from './controller/quantum.controller';
+import { services } from './services/services';
+import { log } from './utils/log';
 
 export const buildPeer = (onSuccess: () => void, onError: () => void) => {
   try {

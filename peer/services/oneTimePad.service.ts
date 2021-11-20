@@ -72,7 +72,7 @@ export const oneTimePadService = (() => {
     oneTimePadMapping = [];
   };
 
-  const getOneTimePadMapping = () => oneTimePadMapping;
+  const getOneTimePadMapping = () => [...oneTimePadMapping];
 
   return {
     establishOneTimePad,
