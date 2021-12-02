@@ -1,14 +1,13 @@
 import { Block } from '../types';
 import { computeBlockHash } from '../utils/computeBlockHash';
 import { sendBlockProposal } from './http.service';
-import { nodeService } from './node.service';
-import { log } from '../utils/log';
+import { log } from '../../shared/utils/log';
+import { NodeService } from './node.service';
 
-export const blockService = (() => {
+export const blockService = (nodeService: NodeService) => {
   let blockProposal: Block | undefined = undefined;
 
-  const { getContiguousNodesHashes } = nodeService;
-  const contiguousNodesHashes = getContiguousNodesHashes();
+  const { getContiguousNodesAddresses } = nodeService;
 
   const createBlockProposal = (
     transaction: string,
@@ -21,8 +20,9 @@ export const blockService = (() => {
 
   const sendBlockProposalToAllPeers = async (toeplitzGroupSignature: string[]) => {
     log('Sending block proposal to peers');
-    for (const nodeHash of contiguousNodesHashes) {
-      await sendBlockProposal(nodeHash, blockProposal, toeplitzGroupSignature);
+    const contiguousNodesAddresses = getContiguousNodesAddresses();
+    for (const nodeAddresses of contiguousNodesAddresses) {
+      await sendBlockProposal(nodeAddresses, blockProposal, toeplitzGroupSignature);
     }
   };
 
@@ -48,7 +48,7 @@ export const blockService = (() => {
     getBlockProposal,
     clearBlockProposal,
   };
-})();
+};
 
 export const generateBlockProposal = (
   transaction: string,

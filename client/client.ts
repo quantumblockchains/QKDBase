@@ -1,10 +1,8 @@
 import express from 'express';
-import bodyParser from 'body-parser';
-
 import { sendTransaction } from './api';
-import { getAllPeersHashes } from './utils';
+import { getAllPeersAddresses } from './utils';
 
-const jsonParser = bodyParser.json();
+const jsonParser = express.json();
 
 const app = express();
 const port = 3015;
@@ -12,8 +10,8 @@ const port = 3015;
 app.post('/send-transaction', jsonParser, async (req, res) => {
   try {
     const body = req.body;
-    const peerHashes = getAllPeersHashes();
-    await Promise.all(peerHashes.map(peerHash => sendTransaction(peerHash, body)));
+    const peerAddresses = getAllPeersAddresses();
+    await Promise.all(peerAddresses.map(peerAddress => sendTransaction(peerAddress, body)));
     res.send({
       message: 'Transactions sent',
     });

@@ -1,68 +1,69 @@
 import { generateRandomBinaryArray } from '../utils/generateRandomBinaryArray';
-import { log } from '../utils/log';
+import { log } from '../../shared/utils/log';
 import { sendOneTimePad, checkIfOneTimePadIsEstablished } from './http.service';
-import { nodeService } from './node.service';
+import { NodeService } from './node.service';
+import { NodeAddresses } from '../../shared/types';
 
 export interface OneTimePadMapping {
   oneTimePad: number[];
-  nodeHash: string;
+  nodeAddress: string;
 }
 
-export const oneTimePadService = (() => {
+export const buildOneTimePadService = (nodeService: NodeService) => {
   let oneTimePadMapping = [] as OneTimePadMapping[];
 
-  const { getContiguousNodesHashes, getMyNodeHash } = nodeService;
-  const contiguousNodesHashes = getContiguousNodesHashes();
-  const myNodeHash = getMyNodeHash();
+  const { getContiguousNodesAddresses, getMyNodeAddresses } = nodeService;
 
   const establishOneTimePad = async (transactionLength: number) => {
     log('Establishing one time pad with peers - transaction');
-    for (const nodeHash of contiguousNodesHashes) {
-      const { body } = await checkIfOneTimePadIsEstablished(
-        nodeHash,
-        myNodeHash
+    const contiguousNodesAddresses = getContiguousNodesAddresses();
+    const myNodeAddress = getMyNodeAddresses();
+    for (const nodeAddresses of contiguousNodesAddresses) {
+      const { oneTimePad } = await checkIfOneTimePadIsEstablished(
+        nodeAddresses,
+        myNodeAddress.address
       );
-      const { oneTimePad } = body;
-      const oneTimePadFromMapping = getOneTimePadFromMapping(nodeHash);
-      if (!!body && compareOneTimePads(oneTimePadFromMapping, oneTimePad)) {
+      const oneTimePadFromMapping = getOneTimePadFromMapping(nodeAddresses.address);
+      if (!!oneTimePad && compareOneTimePads(oneTimePadFromMapping, oneTimePad)) {
         throw Error('Non matching one time pad');
       }
-      if (!(!!body && compareOneTimePads(oneTimePadFromMapping, oneTimePad))) {
-        generateAndSendOneTimePad(transactionLength, nodeHash);
+      if (!(!!oneTimePad && compareOneTimePads(oneTimePadFromMapping, oneTimePad))) {
+        generateAndSendOneTimePad(transactionLength, nodeAddresses);
       }
     }
     return oneTimePadMapping;
   };
 
-  const getOneTimePadFromMapping = (nodeHash: string) => {
+  const getOneTimePadFromMapping = (nodeAddress: string) => {
     const filteredOneTimePadMapping = oneTimePadMapping.filter(
-      (oneTimePadMap) => oneTimePadMap.nodeHash === nodeHash
+      (oneTimePadMap) => oneTimePadMap.nodeAddress === nodeAddress
     )[0];
     return filteredOneTimePadMapping?.oneTimePad;
   };
 
-  const generateAndSendOneTimePad = async (transactionLength: number, nodeHash: string) => {
+  const generateAndSendOneTimePad = async (transactionLength: number, nodeAddresses: NodeAddresses) => {
     const oneTimePad = generateRandomBinaryArray(transactionLength); 
     oneTimePadMapping.push({
-      nodeHash,
+      nodeAddress: nodeAddresses.address,
       oneTimePad
     });
-    await sendOneTimePad(nodeHash, oneTimePad, myNodeHash);
+    const myNodeAddress = getMyNodeAddresses();
+    await sendOneTimePad(nodeAddresses, oneTimePad, myNodeAddress.address);
   };
 
-  const checkIfOneTimePadExists = (nodeHash: string) => {
+  const checkIfOneTimePadExists = (nodeAddress: string) => {
     log('Checking if one time pad exists');
     const toeplitzObjectFound = oneTimePadMapping.filter(
-      (oneTimePadMap) => oneTimePadMap.nodeHash === nodeHash
+      (oneTimePadMap) => oneTimePadMap.nodeAddress === nodeAddress
     )[0];
     return toeplitzObjectFound?.oneTimePad;
   };
 
-  const addOneTimePad = (oneTimePad: number[], nodeHash: string) => {
+  const addOneTimePad = (oneTimePad: number[], nodeAddress: string) => {
     log('Adding established one time pad');
-    if (!oneTimePadMapping.some(oneTimePadMap => oneTimePadMap.nodeHash === nodeHash)) {
+    if (!oneTimePadMapping.some(oneTimePadMap => oneTimePadMap.nodeAddress === nodeAddress)) {
       oneTimePadMapping.push({
-        nodeHash,
+        nodeAddress,
         oneTimePad
       });
     }
@@ -81,11 +82,11 @@ export const oneTimePadService = (() => {
     clearOneTimePads,
     getOneTimePadMapping,
   };
-})();
+};
 
 const compareOneTimePads = (leftOneTimePad: number[], rightOneTimePad: number[]) => {
   if (!leftOneTimePad || !rightOneTimePad) {
     return false;
   }
   return leftOneTimePad.every((value, index) => value === rightOneTimePad[index]);
-}
+};

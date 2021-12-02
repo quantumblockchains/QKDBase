@@ -1,11 +1,13 @@
 import crypto from 'crypto';
+import { NodeAddresses } from '../../shared/types';
 
 export const computeProposalHash = (
   teoplitzHash: string,
-  nodeHash: string,
+  nodeAddresses: NodeAddresses,
   transaction: string,
 ) => {
-  const blockString = `${teoplitzHash}-${nodeHash}-${transaction}`;
+  const { address } = nodeAddresses;
+  const blockString = `${teoplitzHash}-${address}-${transaction}`;
   const hashFunction = crypto.createHash('sha256');
   hashFunction.update(blockString);
   return hashFunction.digest('hex');

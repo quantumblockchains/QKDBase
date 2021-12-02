@@ -1,8 +1,8 @@
 import got from 'got';
 
-export const sendTransaction = async (peerHash: string, body: any) => {
+export const sendTransaction = async (peerAddress: string, body: any) => {
   try {
-    const url = `http://${peerHash}:3016/receive-transaction`;
+    const url = `${peerAddress}:3016/receive-transaction`;
     const response = await got.post(url, {
       json: body,
     });

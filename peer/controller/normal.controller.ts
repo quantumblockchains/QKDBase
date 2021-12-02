@@ -1,10 +1,11 @@
 import express from 'express';
 import { shuffleArray } from '../utils/shuffleArray';
 import { wait } from '../utils/wait';
-import { log } from '../utils/log';
+import { log } from '../../shared/utils/log';
 import { Services } from '../services/services';
 import { matrixMathService } from '../services/matrixMath.service';
 import { DataProposalRequest } from '../types';
+import { NodeAddresses } from '../../shared/types';
 
 export const buildNormalRoutes = (services: Services, onSuccess: () => void, onError: () => void) => {
   const router = express.Router();
@@ -44,8 +45,8 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
   
   const startVoting = (calculatedTransactionHash: string) => {
     log('Starting voting, create peer queue');
-    const allNodesHashes = nodeService.getAllNodesHashes()
-    const randomPeerArray = shuffleArray(allNodesHashes);
+    const allNodesAddresses = nodeService.getAllNodesAddresses()
+    const randomPeerArray = shuffleArray(allNodesAddresses);
     votingService.initializeVote(randomPeerArray, calculatedTransactionHash);
   };
   
@@ -58,7 +59,8 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
   
   router.post('/receive-transaction', jsonParser, async (req, res) => {
     log('Received transaction');
-    if (nodeService.getMyNodeHash() !== '313c7cdbb127b808387486993859a2be864711cbf80f1ea89038bd09') {
+    const { address } = nodeService.getMyNodeAddresses();
+    if (address !== 'http://peer_1') {
       res.send();
       return;
     }
@@ -149,6 +151,13 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
     onSuccess();
     clearEverything();
     res.send('Voting succeeded');
+  });
+
+  router.post('/add-node', jsonParser, async (req, res) => {
+    log('Adding new node');
+    const { nodeAddresses } = req.body as { nodeAddresses: NodeAddresses};
+    nodeService.addNodeAddress(nodeAddresses)
+    res.send('Added new node');
   });
 
   return router;

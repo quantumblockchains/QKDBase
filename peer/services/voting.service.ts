@@ -1,16 +1,16 @@
 import { computeProposalHash } from '../utils/computeProposalHash';
 import { sendVotingFinished, sendAddVote, sendVerifyAndVote } from './http.service';
-import { nodeService } from './node.service';
-import { log } from '../utils/log';
+import { log } from '../../shared/utils/log';
+import { NodeService } from './node.service';
+import { NodeAddresses } from '../../shared/types';
 
-export const votingService = (() => {
+export const buildVotingService = (nodeService: NodeService) => {
   let votes = 0;
   let isVoteEnded = false;
 
-  const { getAllNodesHashes } = nodeService;
-  const allNodesHashes = getAllNodesHashes();
+  const { getAllNodesAddresses } = nodeService;
 
-  const initializeVote = async (peerQueue: string[], transactionHash: string) => {
+  const initializeVote = async (peerQueue: NodeAddresses[], transactionHash: string) => {
     log('Initializing voting');
     try {
       const voter = peerQueue[0];
@@ -27,8 +27,10 @@ export const votingService = (() => {
     transactionHash: string,
   ) => {
     log('Verifying vote');
-    return allNodesHashes.some(nodeHash => {
-      const hashedTransactions = toeplitzGroupSignature.map(hash => computeProposalHash(hash, nodeHash, dataProposal));
+    const allNodesAddresses = getAllNodesAddresses();
+    return allNodesAddresses.some(nodeAddress => {
+      const hashedTransactions = toeplitzGroupSignature
+        .map(hash => computeProposalHash(hash, nodeAddress, dataProposal));
       return hashedTransactions.some(hash => transactionHash === hash);
     });
   };
@@ -42,15 +44,17 @@ export const votingService = (() => {
 
   const sendAddVoteAllPeers = async () => {
     log('Sending verified vote to all peers');
-    for (const nodeHash of allNodesHashes) {
-      await sendAddVote(nodeHash);
+    const allNodesAddresses = getAllNodesAddresses();
+    for (const nodeAddress of allNodesAddresses) {
+      await sendAddVote(nodeAddress);
     }
   };
 
   const sendVotingFinishedToAllPeers = async () => {
     log('Sending request to finish voting');
-    for (const nodeHash of allNodesHashes) {
-      await sendVotingFinished(nodeHash);
+    const allNodesAddresses = getAllNodesAddresses();
+    for (const nodeAddress of allNodesAddresses) {
+      await sendVotingFinished(nodeAddress);
     }
   }
 
@@ -75,4 +79,4 @@ export const votingService = (() => {
     setIsVoteEnded,
     getIsVoteEnded,
   };
-})();
+};

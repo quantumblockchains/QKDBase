@@ -1,16 +1,16 @@
 import { computeProposalHash } from '../utils/computeProposalHash';
-import { nodeService } from './node.service';
-import { log } from '../utils/log';
+import { log } from '../../shared/utils/log';
+import { NodeService } from './node.service';
 
-export const transactionService = (() => {
+export const buildTransactionService = (nodeService: NodeService) => {
   let transactionHash: string | undefined;
 
-  const { getMyNodeHash } = nodeService;
-  const myNodeHash = getMyNodeHash();
+  const { getMyNodeAddresses } = nodeService;
 
   const calculateTransactionHash = (dataProposal: string, toeplitzHash: string) => {
     log('Calculating my hashed transaction');
-    return computeProposalHash(toeplitzHash, myNodeHash, dataProposal);
+    const myNodeAddress = getMyNodeAddresses();
+    return computeProposalHash(toeplitzHash, myNodeAddress, dataProposal);
   }
 
   const storeTransactionHash = (hashedTransaction: string) => {
@@ -30,4 +30,4 @@ export const transactionService = (() => {
     getTransactionHash,
     clearTransactionHash,
   };
-})();
+};

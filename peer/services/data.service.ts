@@ -1,17 +1,17 @@
 import { sendDataProposal } from './http.service';
-import { nodeService } from './node.service';
-import { log } from '../utils/log';
+import { log } from '../../shared/utils/log';
+import { NodeService } from './node.service';
 
-export const dataService = (() => {
+export const buildDataService = (nodeService: NodeService) => {
   let dataProposal: string | undefined = undefined;
 
-  const { getContiguousNodesHashes } = nodeService;
-  const contiguousNodesHashes = getContiguousNodesHashes();
+  const { getContiguousNodesAddresses } = nodeService;
 
   const sendDataProposalToAllPeers = async (toeplitzGroupSignature: string[]) => {
     log('Sending data proposal to peers');
-    for (const nodeHash of contiguousNodesHashes) {
-      await sendDataProposal(nodeHash, dataProposal, toeplitzGroupSignature);
+    const contiguousNodesAddresses = getContiguousNodesAddresses();
+    for (const nodeAddresses of contiguousNodesAddresses) {
+      await sendDataProposal(nodeAddresses, dataProposal, toeplitzGroupSignature);
     }
   };
 
@@ -36,4 +36,4 @@ export const dataService = (() => {
     getDataProposal,
     clearDataProposal
   };
-})();
+};

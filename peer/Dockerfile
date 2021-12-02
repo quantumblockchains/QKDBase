@@ -6,4 +6,4 @@ RUN yarn
 COPY dist .
 
 EXPOSE 3016 3017
-CMD [ "node", "scripts/examplePeer.js" ]
+CMD [ "node", "peer/scripts/examplePeer.js" ]

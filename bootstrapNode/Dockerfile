@@ -3,7 +3,7 @@ ENV NODE PRODUCTION
 WORKDIR /app
 COPY package.json .
 RUN yarn
-COPY /dist .
+COPY dist .
 
 EXPOSE 3010
-CMD [ "node", "bootstrapNode.js" ]
+CMD [ "node", "bootstrapNode/bootstrapNode.js" ]

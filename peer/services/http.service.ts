@@ -1,56 +1,63 @@
-import got, { Response } from 'got';
+import got from 'got';
+import dotenv from 'dotenv';
 import { Block } from '../types';
+import { NodeAddresses } from '../../shared/types';
+dotenv.config();
 
 export const checkIfToeplitzMatrixIsEstablished = async (
-  nodeHash: string,
-  myNodeHash: string
+  nodeAddresses: NodeAddresses,
+  myNodeAddress: string
 ) => {
-  const url = `http://${nodeHash}:3017/check-toeplitz`;
+  const { address, quantumConnectionPort} = nodeAddresses;
+  const url = `${address}:${quantumConnectionPort}/check-toeplitz`;
   const response = await got.post(url, {
     json: {
-      nodeHash: myNodeHash,
+      address: myNodeAddress,
     },
     responseType: 'json',
   });
-  return response as Response<{ toeplitzMatrix: number[][] }>;
+  return response.body as { toeplitzMatrix: number[][] };
 };
 
 export const sendTopelitzMatrix = async (
-  nodeHash: string,
+  nodeAddresses: NodeAddresses,
   toeplitzMatrix: number[][],
-  myNodeHash: string
+  myNodeAddress: string
 ) => {
-  const url = `http://${nodeHash}:3017/receive-toeplitz`;
+  const { address, quantumConnectionPort} = nodeAddresses;
+  const url = `${address}:${quantumConnectionPort}/receive-toeplitz`;
   const response = await got.post(url, {
     json: {
       toeplitzMatrix,
-      nodeHash: myNodeHash,
+      address: myNodeAddress,
     },
   });
   return response;
 };
 
 export const sendOneTimePad = async (
-  nodeHash: string,
+  nodeAddresses: NodeAddresses,
   oneTimePad: number[],
-  myNodeHash: string
+  myNodeAddress: string
 ) => {
-    const url = `http://${nodeHash}:3017/receive-one-time-pad`;
+  const { address, quantumConnectionPort} = nodeAddresses;
+  const url = `${address}:${quantumConnectionPort}/receive-one-time-pad`;
   const response = await got.post(url, {
     json: {
       oneTimePad,
-      nodeHash: myNodeHash,
+      address: myNodeAddress,
     },
   });
   return response;
 };
 
 export const sendBlockProposal = async (
-  nodeHash: string,
+  nodeAddresses: NodeAddresses,
   blockProposal: Block,
   toeplitzGroupSignature: string[]
 ) => {
-  const url = `http://${nodeHash}:3016/receive-block-proposal`;
+  const { address, normalConnectionPort} = nodeAddresses;
+  const url = `${address}:${normalConnectionPort}/receive-block-proposal`;
   const response = await got.post(url, {
     json: {
       blockProposal,
@@ -61,11 +68,12 @@ export const sendBlockProposal = async (
 };
 
 export const sendDataProposal = async (
-  nodeHash: string,
+  nodeAddresses: NodeAddresses,
   dataProposal: string,
   toeplitzGroupSignature: string[]
 ) => {
-  const url = `http://${nodeHash}:3016/receive-data-proposal`;
+  const { address, normalConnectionPort} = nodeAddresses;
+  const url = `${address}:${normalConnectionPort}/receive-data-proposal`;
   const response = await got.post(url, {
     json: {
       dataProposal,
@@ -76,25 +84,27 @@ export const sendDataProposal = async (
 };
 
 export const checkIfOneTimePadIsEstablished = async (
-  nodeHash: string,
-  myNodeHash: string
+  nodeAddresses: NodeAddresses,
+  myNodeAddress: string
 ) => {
-  const url = `http://${nodeHash}:3017/check-one-time-pad`;
+  const { address, quantumConnectionPort} = nodeAddresses;
+  const url = `${address}:${quantumConnectionPort}/check-one-time-pad`;
   const response = await got.post(url, {
     json: {
-      nodeHash: myNodeHash,
+      address: myNodeAddress,
     },
     responseType: 'json',
   });
-  return response as Response<{ oneTimePad: number[] }>;
+  return response.body as { oneTimePad: number[] };
 };
 
 export const sendVerifyAndVote = async (
-  nodeHash: string,
-  peerQueue: string[],
+  nodeAddresses: NodeAddresses,
+  peerQueue: NodeAddresses[],
   transactionHash: string,
 ) => {
-  const url = `http://${nodeHash}:3016/verify-and-vote`;
+  const { address, normalConnectionPort} = nodeAddresses;
+  const url = `${address}:${normalConnectionPort}/verify-and-vote`;
   const response = await got.post(url, {
     json: {
       peerQueue,
@@ -104,20 +114,40 @@ export const sendVerifyAndVote = async (
   return response;
 };
 
-export const sendAddVote = async (nodeHash: string) => {
-  const url = `http://${nodeHash}:3016/add-vote`;
+export const sendAddVote = async (nodeAddresses: NodeAddresses) => {
+  const { address, normalConnectionPort} = nodeAddresses;
+  const url = `${address}:${normalConnectionPort}/add-vote`;
   const response = await got.post(url);
   return response;
 };
 
-export const sendAddBlockToChain = async (nodeHash: string) => {
-  const url = `http://${nodeHash}:3016/add-block-to-chain`;
+export const sendAddBlockToChain = async (nodeAddresses: NodeAddresses) => {
+  const { address, normalConnectionPort} = nodeAddresses;
+  const url = `${address}:${normalConnectionPort}/add-block-to-chain`;
   const response = await got.post(url);
   return response;
 };
 
-export const sendVotingFinished = async (nodeHash: string) => {
-  const url = `http://${nodeHash}:3016/voting-finished`;
+export const sendVotingFinished = async (nodeAddresses: NodeAddresses) => {
+  const { address, normalConnectionPort} = nodeAddresses;
+  const url = `${address}:${normalConnectionPort}/voting-finished`;
   const response = await got.post(url);
   return response;
+};
+
+export const getNodesAddressesFromBootstrap = async () => {
+  const address = process.env.NODE_ADDRESS;
+  const normalConnectionPort = process.env.NORMAL_CONNECTION_PORT;
+  const quantumConnectionPort = process.env.QUANTUM_CONNECTION_PORT;
+  const bootstrapNodeAddress = process.env.BOOTSTRAP_NODE_ADDRESS;
+  const url = `${bootstrapNodeAddress}/connected-nodes`;
+  const response = await got.post(url, {
+    json: { 
+      address,
+      normalConnectionPort,
+      quantumConnectionPort
+    },
+    responseType: 'json'
+  });
+  return response.body as NodeAddresses[];
 };

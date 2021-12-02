@@ -1,23 +1,22 @@
 import { matrix, multiply } from 'mathjs';
 import { generateRandomBinaryArray } from '../utils/generateRandomBinaryArray';
 import { checkIfToeplitzMatrixIsEstablished, sendTopelitzMatrix } from './http.service';
-import { nodeService } from './node.service';
 import { OneTimePadMapping } from './oneTimePad.service';
 import { matrixMathService } from './matrixMath.service';
-import { log } from '../utils/log';
+import { log } from '../../shared/utils/log';
+import { NodeService } from './node.service';
+import { NodeAddresses } from '../../shared/types';
 
 export interface ToeplitzMatrixMapping {
   toeplitzMatrix: number[][];
-  nodeHash: string;
+  nodeAddress: string;
 }
 
-export const toeplitzService = (() => {
+export const buildToeplitzService = (nodeService: NodeService) => {
   let teoplitzMatrixesMapping = [] as ToeplitzMatrixMapping[];
   let toeplitzGroupSignature = [] as string[];
 
-  const { getContiguousNodesHashes, getMyNodeHash } = nodeService;
-  const contiguousNodesHashes = getContiguousNodesHashes();
-  const myNodeHash = getMyNodeHash();
+  const { getContiguousNodesAddresses, getMyNodeAddresses } = nodeService;
 
   const {
     isToeplitzMatrix,
@@ -31,48 +30,50 @@ export const toeplitzService = (() => {
 
   const establishToeplitzMatrix = async (transactionLength: number) => {
     log('Establishing Toeplitz matrix with peers - transaction');
-    for (const nodeHash of contiguousNodesHashes) {
-      const { body } = await checkIfToeplitzMatrixIsEstablished(
-        nodeHash,
-        myNodeHash
+    const contiguousNodesAddresses = getContiguousNodesAddresses();
+    const myNodeAddress = getMyNodeAddresses();
+    for (const nodeAddresses of contiguousNodesAddresses) {
+      const { toeplitzMatrix } = await checkIfToeplitzMatrixIsEstablished(
+        nodeAddresses,
+        myNodeAddress.address
       );
-      const { toeplitzMatrix } = body;
-      const toeplitzMatrixFromMapping = getToeplitzMatrixFromMapping(nodeHash);
+      const toeplitzMatrixFromMapping = getToeplitzMatrixFromMapping(nodeAddresses.address);
       if (!!toeplitzMatrix && !compareToeplitzMatrixes(toeplitzMatrixFromMapping, toeplitzMatrix)) {
         throw Error('Non matching Toeplitz matrix');
       } else if (!toeplitzMatrix) {
-        generateAndSendToeplitzMatrix(transactionLength, nodeHash);
-      } 
+        generateAndSendToeplitzMatrix(transactionLength, nodeAddresses);
+      }
     }
     return teoplitzMatrixesMapping;
   };
 
-  const getToeplitzMatrixFromMapping = (nodeHash: string) => {
+  const getToeplitzMatrixFromMapping = (nodeAddress: string) => {
     const filteredToeplitzMapping = teoplitzMatrixesMapping.filter(
-      (toeplitzMap) => toeplitzMap.nodeHash === nodeHash
+      (toeplitzMap) => toeplitzMap.nodeAddress === nodeAddress
     )[0];
     return filteredToeplitzMapping?.toeplitzMatrix;
   };
 
-  const generateAndSendToeplitzMatrix = async (transactionLength: number, nodeHash: string) => {
+  const generateAndSendToeplitzMatrix = async (transactionLength: number, nodeAddresses: NodeAddresses) => {
     const seedSize = 2 * transactionLength - 1;
     const binaryArray = generateRandomBinaryArray(seedSize);
     const toeplitzMatrix = generateToeplitzMatrix(binaryArray);
     if (isToeplitzMatrix(toeplitzMatrix)) {
       teoplitzMatrixesMapping.push({
-        nodeHash,
+        nodeAddress: nodeAddresses.address,
         toeplitzMatrix,
       });
-      await sendTopelitzMatrix(nodeHash, toeplitzMatrix, myNodeHash);
+      const myNodeAddress = getMyNodeAddresses();
+      await sendTopelitzMatrix(nodeAddresses, toeplitzMatrix, myNodeAddress.address);
     } else {
       throw Error('Invalid Toeplitz matrix');
     }
   };
 
-  const checkIfToeplitzAsStringExists = (nodeHash: string) => {
+  const checkIfToeplitzAsStringExists = (nodeAddress: string) => {
     log('Checking if Toeplitz matrix exists');
     const toeplitzObjectFound = teoplitzMatrixesMapping.filter(
-      (toeplitzMap) => toeplitzMap.nodeHash === nodeHash
+      (toeplitzMap) => toeplitzMap.nodeAddress === nodeAddress
     )[0];
     return toeplitzObjectFound?.toeplitzMatrix;
   };
@@ -119,10 +120,10 @@ export const toeplitzService = (() => {
     return toeplitzGroupSignature.some(hash => hash === toeplitzHash);
   };
 
-  const addToeplitzMatrix = (toeplitzMatrix: number[][], nodeHash: string) => {
+  const addToeplitzMatrix = (toeplitzMatrix: number[][], nodeAddress: string) => {
     log('Adding established Toeplitz matrix');
     teoplitzMatrixesMapping.push({
-      nodeHash,
+      nodeAddress,
       toeplitzMatrix
     });
   };
@@ -137,7 +138,7 @@ export const toeplitzService = (() => {
     const teoplitzMatrixesMapping = getToeplitzMapping();
     teoplitzMatrixesMapping.forEach((toeplitzMap) => {
       const oneTimeMap = oneTimePadMapping.filter(
-        (map) => map.nodeHash === toeplitzMap.nodeHash
+        (map) => map.nodeAddress === toeplitzMap.nodeAddress
       )[0];
       const toeplitzHash = computeToeplitzHash(
         transaction,
@@ -184,4 +185,4 @@ export const toeplitzService = (() => {
     clearToeplitzGroupSignature,
     clearToeplitzMatrixesMapping,
   };
-})();
+};
