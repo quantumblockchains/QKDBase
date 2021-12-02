@@ -1,3 +1,5 @@
+import { log } from "../utils/log";
+
 export const matrixMathService = () => {
   const isToeplitzMatrix = (matrix: number[][]) => {
     for (let row = 0; row < matrix.length - 1; row ++) {
@@ -71,6 +73,11 @@ export const matrixMathService = () => {
       for (let index = 0; index < leftBinary.length; index++) {
         XorResult += leftBinary[index].charCodeAt(0) ^ rightBinary[index].charCodeAt(0);
       }
+    } else {
+      throw Error('Xor: strings have unequal lenght!');
+    }
+    if (leftBinary.length === 0) {
+      log('WARNING Xor: strings are empty!');
     }
     return XorResult;
   };

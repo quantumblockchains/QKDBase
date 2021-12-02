@@ -15,7 +15,7 @@ export const oneTimePadService = (() => {
   const contiguousNodesHashes = getContiguousNodesHashes();
   const myNodeHash = getMyNodeHash();
 
-  const establishOneTimePad = async () => {
+  const establishOneTimePad = async (transactionLength: number) => {
     log('Establishing one time pad with peers - transaction');
     for (const nodeHash of contiguousNodesHashes) {
       const { body } = await checkIfOneTimePadIsEstablished(
@@ -28,7 +28,7 @@ export const oneTimePadService = (() => {
         throw Error('Non matching one time pad');
       }
       if (!(!!body && compareOneTimePads(oneTimePadFromMapping, oneTimePad))) {
-        generateAndSendOneTimePad(nodeHash);
+        generateAndSendOneTimePad(transactionLength, nodeHash);
       }
     }
     return oneTimePadMapping;
@@ -41,8 +41,8 @@ export const oneTimePadService = (() => {
     return filteredOneTimePadMapping?.oneTimePad;
   };
 
-  const generateAndSendOneTimePad = async (nodeHash: string) => {
-    const oneTimePad = generateRandomBinaryArray(35);
+  const generateAndSendOneTimePad = async (transactionLength: number, nodeHash: string) => {
+    const oneTimePad = generateRandomBinaryArray(transactionLength); 
     oneTimePadMapping.push({
       nodeHash,
       oneTimePad

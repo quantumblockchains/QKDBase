@@ -3,6 +3,7 @@ import { shuffleArray } from '../utils/shuffleArray';
 import { wait } from '../utils/wait';
 import { log } from '../utils/log';
 import { Services } from '../services/services';
+import { matrixMathService } from '../services/matrixMath.service';
 import { DataProposalRequest } from '../types';
 
 export const buildNormalRoutes = (services: Services, onSuccess: () => void, onError: () => void) => {
@@ -20,9 +21,10 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
     votingService.clearVotes();
   };
   
-  const establishNecessaryData = async () => {
-    await toeplitzService.establishToeplitzMatrix();
-    await oneTimePadService.establishOneTimePad();
+  const establishNecessaryData = async (transaction: string) => {
+    const transactionLength = matrixMathService().convertStringToBinary(transaction).length;
+    await toeplitzService.establishToeplitzMatrix(transactionLength);
+    await oneTimePadService.establishOneTimePad(transactionLength);
   };
   
   const generateHashedTransaction = (toeplitzHash: string) => {
@@ -63,10 +65,7 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
     try {
       votingService.setIsVoteEnded(false);
       const { transaction }: { transaction: string } = req.body;
-      if (transaction.length !== 5) {
-        throw Error('Invalid transaction length');
-      }
-      await establishNecessaryData();
+      await establishNecessaryData(transaction);
       const oneTimePadMapping = oneTimePadService.getOneTimePadMapping();
       const toeplitzGroupSignature = toeplitzService.generateToeplitzGroupSignature(oneTimePadMapping, transaction);
       dataService.setDataProposal(transaction);

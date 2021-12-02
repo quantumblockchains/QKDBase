@@ -29,7 +29,7 @@ export const toeplitzService = (() => {
     calculateXor
   } = matrixMathService();
 
-  const establishToeplitzMatrix = async () => {
+  const establishToeplitzMatrix = async (transactionLength: number) => {
     log('Establishing Toeplitz matrix with peers - transaction');
     for (const nodeHash of contiguousNodesHashes) {
       const { body } = await checkIfToeplitzMatrixIsEstablished(
@@ -41,8 +41,8 @@ export const toeplitzService = (() => {
       if (!!toeplitzMatrix && !compareToeplitzMatrixes(toeplitzMatrixFromMapping, toeplitzMatrix)) {
         throw Error('Non matching Toeplitz matrix');
       } else if (!toeplitzMatrix) {
-        generateAndSendToeplitzMatrix(nodeHash);
-      }
+        generateAndSendToeplitzMatrix(transactionLength, nodeHash);
+      } 
     }
     return teoplitzMatrixesMapping;
   };
@@ -54,8 +54,9 @@ export const toeplitzService = (() => {
     return filteredToeplitzMapping?.toeplitzMatrix;
   };
 
-  const generateAndSendToeplitzMatrix = async (nodeHash: string) => {
-    const binaryArray = generateRandomBinaryArray(69);
+  const generateAndSendToeplitzMatrix = async (transactionLength: number, nodeHash: string) => {
+    const seedSize = 2 * transactionLength - 1;
+    const binaryArray = generateRandomBinaryArray(seedSize);
     const toeplitzMatrix = generateToeplitzMatrix(binaryArray);
     if (isToeplitzMatrix(toeplitzMatrix)) {
       teoplitzMatrixesMapping.push({
@@ -102,9 +103,11 @@ export const toeplitzService = (() => {
   };
 
   const generateToeplitzHash = (dataProposal: string) => {
-    const binaryArray = generateRandomBinaryArray(69);
+    const dataAsBinary = convertStringToBinary(dataProposal);
+    const seedSize = 2 * dataAsBinary.length - 1;
+    const binaryArray = generateRandomBinaryArray(seedSize);
     const toeplitzMatrix = generateToeplitzMatrix(binaryArray);
-    const oneTimePad = generateRandomBinaryArray(35);
+    const oneTimePad = generateRandomBinaryArray(dataAsBinary.length);
     return computeToeplitzHash(dataProposal, toeplitzMatrix, oneTimePad);
   }
 
