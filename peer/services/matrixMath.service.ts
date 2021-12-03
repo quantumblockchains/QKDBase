@@ -1,4 +1,4 @@
-import { log } from "../utils/log";
+import { log } from "../../shared/utils/log";
 
 export const matrixMathService = () => {
   const isToeplitzMatrix = (matrix: number[][]) => {
