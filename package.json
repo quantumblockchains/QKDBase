@@ -9,6 +9,8 @@
     "build:dockers": "yarn build && docker-compose build",
     "start:dockers": "docker-compose up -d",
     "stop:dockers": "docker rm -f $(docker ps -aq)",
-    "clear:docker-images": "docker rmi -f $(docker images -q)"
+    "clear:docker-images": "docker rmi -f $(docker images -q)",
+    "lint": "yarn workspace peer lint",
+    "test": "echo \"No tests\""
   }
 }
