@@ -16,7 +16,7 @@ export const buildVotingService = (nodeService: NodeService) => {
       const voter = peerQueue[0];
       await sendVerifyAndVote(voter, peerQueue.slice(1), transactionHash);
     } catch (error) {
-      console.error(error)
+      console.error(error);
       throw error;
     }
   };
@@ -38,7 +38,7 @@ export const buildVotingService = (nodeService: NodeService) => {
   const addVote = () => {    
     log('Adding vote');
     votes = votes + 1;
-  }
+  };
 
   const getVotes = () => votes;
 
@@ -56,7 +56,7 @@ export const buildVotingService = (nodeService: NodeService) => {
     for (const nodeAddress of allNodesAddresses) {
       await sendVotingFinished(nodeAddress);
     }
-  }
+  };
 
   const clearVotes = () => {
     votes = 0;

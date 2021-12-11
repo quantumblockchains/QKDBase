@@ -57,7 +57,7 @@ export const blockchainService = (() => {
       const filename = path.join(__dirname, `../blocks/block_${block.index}.json`);
       fs.writeFileSync(filename, JSON.stringify(block));
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
   };
 

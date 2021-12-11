@@ -11,12 +11,12 @@ export const buildTransactionService = (nodeService: NodeService) => {
     log('Calculating my hashed transaction');
     const myNodeAddress = getMyNodeAddresses();
     return computeProposalHash(toeplitzHash, myNodeAddress, dataProposal);
-  }
+  };
 
   const storeTransactionHash = (hashedTransaction: string) => {
     log('Storing my hashed transaction');
     transactionHash = hashedTransaction;
-  }
+  };
 
   const getTransactionHash = () => transactionHash;
 

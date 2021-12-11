@@ -17,6 +17,7 @@
     ],
     "ignorePatterns": ["dist/*"],
     "rules": {
-        "max-len": ["error", { "code": 120 }]
+        "max-len": ["error", { "code": 120 }],
+        "semi": [2, "always"]
     }
 }

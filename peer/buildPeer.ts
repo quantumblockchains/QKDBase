@@ -42,4 +42,4 @@ const validateEnvVariables = () => {
   if (!(nodeAddress && normalConnectionPort && quantumConnectionPort && bootstrapNodeAddress)) {
     throw Error('Invalid environment variables');
   }
-}
+};

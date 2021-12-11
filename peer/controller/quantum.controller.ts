@@ -55,4 +55,4 @@ export const getQuantumRoutes = (services: Services) => {
   });
 
   return router;
-}
+};

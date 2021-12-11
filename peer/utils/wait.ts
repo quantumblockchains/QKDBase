@@ -5,6 +5,6 @@ export const wait = (predicate: () => boolean, timeInMilliseconds: number) => {
     } else {
       setTimeout(() => checkFunction(resolve), timeInMilliseconds);
     }
-  }
+  };
   return new Promise(checkFunction);
 };

@@ -90,7 +90,7 @@ export const buildToeplitzService = (nodeService: NodeService) => {
     const multipliedMatrixesModulo = calculateModuloFromMatrixElements(multipliedMatrixes.toArray() as number[][]);
     const parsedOneTimePad = oneTimePad.join('');
     return calculateXor(multipliedMatrixesModulo, parsedOneTimePad);
-  }
+  };
 
   const calculateToeplitzHash = (
     oneTimePadMapping: OneTimePadMapping[],
@@ -100,7 +100,7 @@ export const buildToeplitzService = (nodeService: NodeService) => {
     const teoplitzMatrixesMapping = getToeplitzMapping();
     const { toeplitzMatrix } = teoplitzMatrixesMapping[0];
     const { oneTimePad } = oneTimePadMapping[0];
-    return computeToeplitzHash(dataProposal, toeplitzMatrix, oneTimePad)
+    return computeToeplitzHash(dataProposal, toeplitzMatrix, oneTimePad);
   };
 
   const generateToeplitzHash = (dataProposal: string) => {
@@ -110,7 +110,7 @@ export const buildToeplitzService = (nodeService: NodeService) => {
     const toeplitzMatrix = generateToeplitzMatrix(binaryArray);
     const oneTimePad = generateRandomBinaryArray(dataAsBinary.length);
     return computeToeplitzHash(dataProposal, toeplitzMatrix, oneTimePad);
-  }
+  };
 
   const verifyToeplitzGroupSignature = (
     toeplitzGroupSignature: string[],

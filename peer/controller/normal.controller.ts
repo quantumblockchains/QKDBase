@@ -33,7 +33,7 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
     const calculatedTransactionHash = transactionService.calculateTransactionHash(dataProposal, toeplitzHash);
     transactionService.storeTransactionHash(calculatedTransactionHash);
     return calculatedTransactionHash;
-  }
+  };
   
   const addProposalPeerToToeplitzGroupSignature = () => {
     const dataProposal = dataService.getDataProposal();
@@ -45,7 +45,7 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
   
   const startVoting = (calculatedTransactionHash: string) => {
     log('Starting voting, create peer queue');
-    const allNodesAddresses = nodeService.getAllNodesAddresses()
+    const allNodesAddresses = nodeService.getAllNodesAddresses();
     const randomPeerArray = shuffleArray(allNodesAddresses);
     votingService.initializeVote(randomPeerArray, calculatedTransactionHash);
   };
@@ -156,10 +156,10 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
   router.post('/add-node', jsonParser, async (req, res) => {
     log('Adding new node');
     const { nodeAddresses } = req.body as { nodeAddresses: NodeAddresses};
-    nodeService.addNodeAddress(nodeAddresses)
+    nodeService.addNodeAddress(nodeAddresses);
     res.send('Added new node');
   });
 
   return router;
-}
+};
 

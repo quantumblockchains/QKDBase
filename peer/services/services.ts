@@ -19,7 +19,7 @@ export const buildServices = (): Services => {
     toeplitzService,
     transactionService,
     votingService
-  }
+  };
 };
 
 export interface Services {
