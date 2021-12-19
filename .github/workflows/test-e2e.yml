@@ -1,0 +1,21 @@
+name: TestE2E
+on: [push]
+jobs:
+  test-e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
+  
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install
+      run: yarn install
+    - name: Build and start dockers
+      run: python3 start_docker.py
+    - name: Wait for peers to connect
+      run: cd ./scripts && ./wait-for-peers.sh
+    - name: Send transaction
+      run: docker exec client yarn test:e2e
+    - name: Check docker logs
+      run: yarn docker:test-e2e

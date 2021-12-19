@@ -8,6 +8,6 @@ export const sendTransaction = async (peerAddress: string, body: any) => {
     });
     return response;
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 };

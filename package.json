@@ -11,6 +11,7 @@
     "stop:dockers": "docker rm -f $(docker ps -aq)",
     "clear:docker-images": "docker rmi -f $(docker images -q)",
     "lint": "yarn workspace peer lint",
-    "test": "echo \"No tests\""
+    "test": "echo \"No tests\"",
+    "docker:test-e2e": "./scripts/verify-docker-logs.sh"
   }
 }

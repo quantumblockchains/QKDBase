@@ -14,6 +14,7 @@
   "scripts": {
     "build": "rm -rf ./dist && tsc --outDir ./dist",
     "build:docker": "yarn build && docker build -t client .",
-    "start:docker": "docker run -p 3015:3015 -d client"
+    "start:docker": "docker run -p 3015:3015 -d client",
+    "test:e2e": "node ./scripts/test-e2e-script.js"
   }
 }

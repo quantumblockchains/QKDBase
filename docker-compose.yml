@@ -9,9 +9,6 @@ services:
       - '3015:3015'
     environment:
       - FIRST_PEER_HASH=http://peer_1
-      - SECOND_PEER_HASH=http://peer_2
-      - THIRD_PEER_HASH=http://peer_3
-      - FOURTH_PEER_HASH=http://peer_4
     container_name: client
   bootstrap_node:
     image: bootstrap_node

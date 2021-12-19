@@ -59,11 +59,6 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
   
   router.post('/receive-transaction', jsonParser, async (req, res) => {
     log('Received transaction');
-    const { address } = nodeService.getMyNodeAddresses();
-    if (address !== 'http://peer_1') {
-      res.send();
-      return;
-    }
     try {
       votingService.setIsVoteEnded(false);
       const { transaction }: { transaction: string } = req.body;
@@ -105,6 +100,10 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
   router.post('/verify-and-vote', jsonParser, async (req, res) => {
     log('My turn to verify and vote');
     try {
+      if (votingService.getIsVoteEnded()) {
+        res.send('Voting ended');
+        return;
+      }
       const { peerQueue, transactionHash } = req.body;
       await waitForDataToPropagate();
       const dataProposal = dataService.getDataProposal();
