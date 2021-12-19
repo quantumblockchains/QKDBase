@@ -109,7 +109,7 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
       const dataProposal = dataService.getDataProposal();
       const toeplitzGroupSignature = toeplitzService.getToeplitzGroupSignature();
       const isVerified = votingService.verifyVote(dataProposal, toeplitzGroupSignature, transactionHash);
-      if (isVerified) {
+      if (!isVerified) {
         throw Error('Non verified');
       } 
       log('Vote verified');

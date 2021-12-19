@@ -1,3 +1,8 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 export const log = (message: string) => {
-  console.log(message);
+  if (process.env.NODE_ENV !== 'test') {
+    console.log(message);
+  }
 };
