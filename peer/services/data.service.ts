@@ -11,8 +11,10 @@ export const buildDataService = (nodeService: NodeService) => {
     log('Sending data proposal to peers');
     const contiguousNodesAddresses = getContiguousNodesAddresses();
     for (const nodeAddresses of contiguousNodesAddresses) {
-      if (dataProposal) {
-        await sendDataProposal(nodeAddresses, dataProposal, toeplitzGroupSignature);   
+      if (!dataProposal) {
+        throw Error('Empty data proposal');
+      } else {
+        await sendDataProposal(nodeAddresses, dataProposal, toeplitzGroupSignature);
       }
     }
   };
@@ -28,7 +30,7 @@ export const buildDataService = (nodeService: NodeService) => {
 
   const getDataProposal = () => {
     if (!dataProposal) {
-      throw Error('Invalid data proposal');
+      throw Error('Empty data proposal');
     }
     return dataProposal;
   };
