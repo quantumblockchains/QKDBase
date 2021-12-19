@@ -20,6 +20,9 @@ export const blockService = (nodeService: NodeService) => {
 
   const sendBlockProposalToAllPeers = async (toeplitzGroupSignature: string[]) => {
     log('Sending block proposal to peers');
+    if (!blockProposal) {
+      throw Error('Missing block proposal');
+    } 
     const contiguousNodesAddresses = getContiguousNodesAddresses();
     for (const nodeAddresses of contiguousNodesAddresses) {
       await sendBlockProposal(nodeAddresses, blockProposal, toeplitzGroupSignature);
@@ -28,10 +31,10 @@ export const blockService = (nodeService: NodeService) => {
 
   const setBlockProposal = (block: Block) => {
     log('Storing block proposal');
-    if (!blockProposal) {
-      blockProposal = block;
-    } else if (blockProposal && !compareBlocks(blockProposal, block)) {
+    if (blockProposal && !compareBlocks(blockProposal, block)) {
       throw Error('Invalid block proposal');
+    } else if (!blockProposal) {
+      blockProposal = block;
     }
   };
 
@@ -69,5 +72,5 @@ export const generateBlockProposal = (
 
 const compareBlocks = (leftBlock: Block, rightBlock: Block) =>
   Object.keys(leftBlock).every(
-    (key: keyof Block) => leftBlock[key] === rightBlock[key]
+    (key) => leftBlock[key as keyof Block] === rightBlock[key as keyof Block]
   );

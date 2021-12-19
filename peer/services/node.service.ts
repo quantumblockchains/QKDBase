@@ -29,11 +29,20 @@ export const nodeService = (() => {
     });
   };
 
-  const getMyNodeAddresses = () => ({
-    address: process.env.NODE_ADDRESS,
-    normalConnectionPort: process.env.NORMAL_CONNECTION_PORT,
-    quantumConnectionPort: process.env.QUANTUM_CONNECTION_PORT
-  });
+  const getMyNodeAddresses = () => {
+    const address = process.env.NODE_ADDRESS;
+    const normalConnectionPort = process.env.NORMAL_CONNECTION_PORT;
+    const quantumConnectionPort = process.env.QUANTUM_CONNECTION_PORT;
+    
+    if (!(address && normalConnectionPort && quantumConnectionPort)) {
+      throw Error('Missing my node configuration');
+    }
+    return {
+      address,
+      normalConnectionPort,
+      quantumConnectionPort
+    };
+  };
 
   const getAllNodesAddresses = () => [...nodes];
 

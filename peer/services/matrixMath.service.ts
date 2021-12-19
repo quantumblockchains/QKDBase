@@ -69,12 +69,11 @@ export const matrixMathService = () => {
 
   const calculateXor = (leftBinary: string, rightBinary: string) => {
     let XorResult = '';
-    if (leftBinary.length === rightBinary.length) {
-      for (let index = 0; index < leftBinary.length; index++) {
-        XorResult += leftBinary[index].charCodeAt(0) ^ rightBinary[index].charCodeAt(0);
-      }
-    } else {
+    if (leftBinary.length !== rightBinary.length) {
       throw Error('Xor: strings have unequal lenght!');
+    }
+    for (let index = 0; index < leftBinary.length; index++) {
+      XorResult += leftBinary[index].charCodeAt(0) ^ rightBinary[index].charCodeAt(0);
     }
     if (leftBinary.length === 0) {
       log('WARNING Xor: strings are empty!');

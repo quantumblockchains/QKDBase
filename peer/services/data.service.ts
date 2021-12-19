@@ -11,20 +11,27 @@ export const buildDataService = (nodeService: NodeService) => {
     log('Sending data proposal to peers');
     const contiguousNodesAddresses = getContiguousNodesAddresses();
     for (const nodeAddresses of contiguousNodesAddresses) {
-      await sendDataProposal(nodeAddresses, dataProposal, toeplitzGroupSignature);
+      if (dataProposal) {
+        await sendDataProposal(nodeAddresses, dataProposal, toeplitzGroupSignature);   
+      }
     }
   };
 
   const setDataProposal = (data: string) => {
     log('Storing data proposal');
-    if (!dataProposal) {
-      dataProposal = data;
-    } else if (dataProposal && dataProposal !== data) {
+    if (dataProposal && dataProposal !== data) {
       throw Error('Invalid data proposal');
+    } else if (!dataProposal) {
+      dataProposal = data;
     }
   };
 
-  const getDataProposal = () => dataProposal;
+  const getDataProposal = () => {
+    if (!dataProposal) {
+      throw Error('Invalid data proposal');
+    }
+    return dataProposal;
+  };
 
   const clearDataProposal = () => {
     dataProposal = undefined;

@@ -88,14 +88,13 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
       const oneTimePadMapping = oneTimePadService.getOneTimePadMapping();
       const calculatedToeplitzHash = toeplitzService.calculateToeplitzHash(oneTimePadMapping, dataProposal);
       const isVerified = toeplitzService.verifyToeplitzGroupSignature(toeplitzGroupSignature, calculatedToeplitzHash);
-      if (isVerified) {
-        dataService.setDataProposal(dataProposal);
-        toeplitzService.storeToeplitzGroupSignature(toeplitzGroupSignature);
-        const calculatedTransactionHash = generateHashedTransaction(calculatedToeplitzHash);
-        startVoting(calculatedTransactionHash);
-      } else {
+      if (!isVerified) {
         throw Error('Invalid data proposal signature');
-      }
+      } 
+      dataService.setDataProposal(dataProposal);
+      toeplitzService.storeToeplitzGroupSignature(toeplitzGroupSignature);
+      const calculatedTransactionHash = generateHashedTransaction(calculatedToeplitzHash);
+      startVoting(calculatedTransactionHash);
     } catch (error) {
       console.error(error);
       onError();
@@ -112,17 +111,16 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
       const toeplitzGroupSignature = toeplitzService.getToeplitzGroupSignature();
       const isVerified = votingService.verifyVote(dataProposal, toeplitzGroupSignature, transactionHash);
       if (isVerified) {
-        log('Vote verified');
-        await votingService.sendAddVoteAllPeers();
-        if (votingService.getVotes() >= 12) {
-          await votingService.sendVotingFinishedToAllPeers();
-        } else {
-          if (peerQueue.length !== 0) {
-            votingService.initializeVote(peerQueue, transactionHash);
-          }
-        }
-      } else {
         throw Error('Non verified');
+      } 
+      log('Vote verified');
+      await votingService.sendAddVoteAllPeers();
+      if (votingService.getVotes() >= 12) {
+        await votingService.sendVotingFinishedToAllPeers();
+      } else {
+        if (peerQueue.length !== 0) {
+          votingService.initializeVote(peerQueue, transactionHash);
+        }
       }
     } catch (error) {
       console.error(error);

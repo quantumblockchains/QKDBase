@@ -58,16 +58,15 @@ export const buildToeplitzService = (nodeService: NodeService) => {
     const seedSize = 2 * transactionLength - 1;
     const binaryArray = generateRandomBinaryArray(seedSize);
     const toeplitzMatrix = generateToeplitzMatrix(binaryArray);
-    if (isToeplitzMatrix(toeplitzMatrix)) {
-      teoplitzMatrixesMapping.push({
-        nodeAddress: nodeAddresses.address,
-        toeplitzMatrix,
-      });
-      const myNodeAddress = getMyNodeAddresses();
-      await sendTopelitzMatrix(nodeAddresses, toeplitzMatrix, myNodeAddress.address);
-    } else {
+    if (!isToeplitzMatrix(toeplitzMatrix)) {
       throw Error('Invalid Toeplitz matrix');
     }
+    teoplitzMatrixesMapping.push({
+      nodeAddress: nodeAddresses.address,
+      toeplitzMatrix,
+    });
+    const myNodeAddress = getMyNodeAddresses();
+    await sendTopelitzMatrix(nodeAddresses, toeplitzMatrix, myNodeAddress.address);
   };
 
   const checkIfToeplitzAsStringExists = (nodeAddress: string) => {
