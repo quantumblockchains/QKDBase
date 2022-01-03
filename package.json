@@ -2,15 +2,26 @@
   "name": "quantum_blockchain",
   "version": "1.0.0",
   "license": "MIT",
-  "workspaces": ["client", "peer", "bootstrapNode", "shared"],
+  "workspaces": [
+    "client",
+    "peer",
+    "bootstrapNode",
+    "shared"
+  ],
   "private": true,
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
+    "eslint": "^8.6.0",
+    "typescript": "^4.5.4"
+  },
   "scripts": {
     "build": "yarn workspace client build && yarn workspace peer build && yarn workspace bootstrapNode build",
     "build:dockers": "yarn build && docker-compose build",
     "start:dockers": "docker-compose up -d",
     "stop:dockers": "docker rm -f $(docker ps -aq)",
     "clear:docker-images": "docker rmi -f $(docker images -q)",
-    "lint": "yarn workspace peer lint",
+    "lint": "yarn eslint ./",
     "test": "yarn workspace peer test",
     "docker:test-e2e": "./scripts/verify-docker-logs.sh"
   }

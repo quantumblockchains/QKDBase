@@ -11,10 +11,14 @@ app.post('/send-transaction', jsonParser, async (req, res) => {
   try {
     const body = req.body;
     const peerAddress = getFirstPeersAddresses();
-    await sendTransaction(peerAddress, body);
-    res.send({
-      message: 'Transactions sent',
-    });
+    if (peerAddress) {
+      await sendTransaction(peerAddress, body);
+      res.send({
+        message: 'Transactions sent',
+      });
+    } else {
+      res.status(400).send({ message: 'Missing peer address '});
+    }
   } catch (error) {
     res.status(400).send({
       error,

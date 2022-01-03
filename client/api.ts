@@ -1,6 +1,7 @@
 import got from 'got';
 
-export const sendTransaction = async (peerAddress: string, body: any) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const sendTransaction = async (peerAddress: string, body: Record<string, any>) => {
   try {
     const url = `${peerAddress}:3016/receive-transaction`;
     const response = await got.post(url, {

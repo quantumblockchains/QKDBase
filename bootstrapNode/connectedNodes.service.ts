@@ -17,7 +17,7 @@ export const connectedNodesService = () => {
         },
       });
     }
-  }
+  };
 
   return {
     addNode,
