@@ -5,7 +5,7 @@ import { NodeAddresses } from '../../shared/types';
 dotenv.config();
 
 export const nodeService = (() => {
-  const nodes = [{
+  let nodes = [{
     address: process.env.NODE_ADDRESS,
     normalConnectionPort: process.env.NORMAL_CONNECTION_PORT,
     quantumConnectionPort: process.env.QUANTUM_CONNECTION_PORT
@@ -46,12 +46,21 @@ export const nodeService = (() => {
 
   const getAllNodesAddresses = () => [...nodes];
 
+  const clearNodesAddresses = () => {
+    nodes = [{
+      address: process.env.NODE_ADDRESS,
+      normalConnectionPort: process.env.NORMAL_CONNECTION_PORT,
+      quantumConnectionPort: process.env.QUANTUM_CONNECTION_PORT
+    }] as NodeAddresses[];
+  };
+
   return {
     getNodesFromBootstrap,
     addNodeAddress,
     getContiguousNodesAddresses,
     getMyNodeAddresses,
-    getAllNodesAddresses
+    getAllNodesAddresses,
+    clearNodesAddresses
   };
 })();
 
