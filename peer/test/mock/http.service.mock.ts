@@ -7,11 +7,18 @@ interface ReceiveDataProposalBody {
 }
 
 const handlers = [
-  rest.post<ReceiveDataProposalBody>('http://testaddress:1/receive-data-proposal', (_request, response, ctx) => {
-    return response(
-      ctx.status(200)
-    );
-  })
+  rest.post<ReceiveDataProposalBody>('http://testaddress:1/receive-data-proposal', (_request, response) => {
+    return response();
+  }),
+  rest.post('http://testaddress:1/verify-and-vote', (_request, response) => {
+    return response();
+  }),
+  rest.post('http://testaddress:1/add-vote', (_request, response) => {
+    return response();
+  }),
+  rest.post('http://testaddress:1/voting-finished', (_request, response) => {
+    return response();
+  }),
 ];
 
 export const server = setupServer(...handlers);

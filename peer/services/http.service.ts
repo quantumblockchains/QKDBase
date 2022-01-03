@@ -121,13 +121,6 @@ export const sendAddVote = async (nodeAddresses: NodeAddresses) => {
   return response;
 };
 
-export const sendAddBlockToChain = async (nodeAddresses: NodeAddresses) => {
-  const { address, normalConnectionPort} = nodeAddresses;
-  const url = `${address}:${normalConnectionPort}/add-block-to-chain`;
-  const response = await got.post(url);
-  return response;
-};
-
 export const sendVotingFinished = async (nodeAddresses: NodeAddresses) => {
   const { address, normalConnectionPort} = nodeAddresses;
   const url = `${address}:${normalConnectionPort}/voting-finished`;

@@ -48,14 +48,14 @@ describe('Data service', () => {
     afterAll(() => server.close());
 
     test('Throw error if data proposal not set ', async () => {
-      const testToeplitzGroupSignature = ['test1', 'test2', 'test3'];
+      const testToeplitzGroupSignature = ['testToeplitzHash1', 'testToeplitzHash2', 'testToeplitzHash3'];
       const sendDataProposal = dataService.sendDataProposalToAllPeers(testToeplitzGroupSignature);
       await expect(sendDataProposal).rejects.toThrowError('Empty data proposal');
     });
 
     test("Don't throw error if data proposal set and sent", async () => {
       dataService.setDataProposal('testValue');
-      const testToeplitzGroupSignature = ['test1', 'test2', 'test3'];
+      const testToeplitzGroupSignature = ['testToeplitzHash1', 'testToeplitzHash2', 'testToeplitzHash3'];
       const sendDataProposal = dataService.sendDataProposalToAllPeers(testToeplitzGroupSignature);
       await expect(sendDataProposal).resolves.toBeUndefined();
     });

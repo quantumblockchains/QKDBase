@@ -12,13 +12,9 @@ export const buildVotingService = (nodeService: NodeService) => {
 
   const initializeVote = async (peerQueue: NodeAddresses[], transactionHash: string) => {
     log('Initializing voting');
-    try {
-      const voter = peerQueue[0];
-      await sendVerifyAndVote(voter, peerQueue.slice(1), transactionHash);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const voter = peerQueue[0];
+    const restPeers = peerQueue.slice(1);
+    await sendVerifyAndVote(voter, restPeers, transactionHash);
   };
 
   const verifyVote = (
