@@ -12,7 +12,7 @@ export const checkIfToeplitzMatrixIsEstablished = async (
   const url = `${address}:${quantumConnectionPort}/check-toeplitz`;
   const response = await got.post(url, {
     json: {
-      address: myNodeAddress,
+      nodeAddress: myNodeAddress,
     },
     responseType: 'json',
   });
@@ -29,7 +29,7 @@ export const sendTopelitzMatrix = async (
   const response = await got.post(url, {
     json: {
       toeplitzMatrix,
-      address: myNodeAddress,
+      nodeAddress: myNodeAddress,
     },
   });
   return response;
@@ -45,7 +45,7 @@ export const sendOneTimePad = async (
   const response = await got.post(url, {
     json: {
       oneTimePad,
-      address: myNodeAddress,
+      nodeAddress: myNodeAddress,
     },
   });
   return response;
@@ -91,7 +91,7 @@ export const checkIfOneTimePadIsEstablished = async (
   const url = `${address}:${quantumConnectionPort}/check-one-time-pad`;
   const response = await got.post(url, {
     json: {
-      address: myNodeAddress,
+      nodeAddress: myNodeAddress,
     },
     responseType: 'json',
   });

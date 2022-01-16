@@ -15,7 +15,7 @@ export const buildOneTimePadService = (nodeService: NodeService) => {
   const { getContiguousNodesAddresses, getMyNodeAddresses } = nodeService;
 
   const establishOneTimePad = async (transactionLength: number) => {
-    log('Establishing one time pad with peers - transaction');
+    log('Establishing one time pad with peers');
     const contiguousNodesAddresses = getContiguousNodesAddresses();
     const myNodeAddress = getMyNodeAddresses();
     for (const nodeAddresses of contiguousNodesAddresses) {
@@ -24,20 +24,27 @@ export const buildOneTimePadService = (nodeService: NodeService) => {
         myNodeAddress.address
       );
       const oneTimePadFromMapping = getOneTimePadFromMapping(nodeAddresses.address);
-      if (!!oneTimePad && compareOneTimePads(oneTimePadFromMapping, oneTimePad)) {
-        throw Error('Non matching one time pad');
-      }
-      if (!(!!oneTimePad && compareOneTimePads(oneTimePadFromMapping, oneTimePad))) {
-        generateAndSendOneTimePad(transactionLength, nodeAddresses);
+      if (oneTimePad && oneTimePadFromMapping) {
+        if (!compareOneTimePads(oneTimePadFromMapping, oneTimePad)) {
+          throw Error('Non matching one time pad');
+        }
+      } else {
+        if (!oneTimePad && !oneTimePadFromMapping) {
+          generateAndSendOneTimePad(transactionLength, nodeAddresses);
+        } else if (!oneTimePad && oneTimePadFromMapping) {
+          await sendOneTimePad(nodeAddresses, oneTimePadFromMapping, myNodeAddress.address);
+        } else if (!oneTimePadFromMapping && oneTimePad) {
+          addOneTimePad(oneTimePad, nodeAddresses.address);
+        }
       }
     }
     return oneTimePadMapping;
   };
 
   const getOneTimePadFromMapping = (nodeAddress: string) => {
-    const filteredOneTimePadMapping = oneTimePadMapping.filter(
+    const filteredOneTimePadMapping = oneTimePadMapping.find(
       (oneTimePadMap) => oneTimePadMap.nodeAddress === nodeAddress
-    )[0];
+    );
     return filteredOneTimePadMapping?.oneTimePad;
   };
 
@@ -49,14 +56,6 @@ export const buildOneTimePadService = (nodeService: NodeService) => {
     });
     const myNodeAddress = getMyNodeAddresses();
     await sendOneTimePad(nodeAddresses, oneTimePad, myNodeAddress.address);
-  };
-
-  const checkIfOneTimePadExists = (nodeAddress: string) => {
-    log('Checking if one time pad exists');
-    const toeplitzObjectFound = oneTimePadMapping.filter(
-      (oneTimePadMap) => oneTimePadMap.nodeAddress === nodeAddress
-    )[0];
-    return toeplitzObjectFound?.oneTimePad;
   };
 
   const addOneTimePad = (oneTimePad: number[], nodeAddress: string) => {
@@ -77,7 +76,7 @@ export const buildOneTimePadService = (nodeService: NodeService) => {
 
   return {
     establishOneTimePad,
-    checkIfOneTimePadExists,
+    getOneTimePadFromMapping,
     addOneTimePad,
     clearOneTimePads,
     getOneTimePadMapping,
@@ -85,8 +84,5 @@ export const buildOneTimePadService = (nodeService: NodeService) => {
 };
 
 const compareOneTimePads = (leftOneTimePad: number[], rightOneTimePad: number[]) => {
-  if (!leftOneTimePad || !rightOneTimePad) {
-    return false;
-  }
   return leftOneTimePad.every((value, index) => value === rightOneTimePad[index]);
 };

@@ -2,7 +2,7 @@ import { nodeService } from '../../services/node.service';
 import { buildVotingService } from '../../services/voting.service';
 import { server } from '../mock/http.service.mock';
 jest.spyOn(nodeService, 'getAllNodesAddresses').mockImplementation(() => [{
-  address: 'http://testAddress',
+  address: 'http://test-address',
   normalConnectionPort: '1',
   quantumConnectionPort: '2'
 }]);
@@ -64,7 +64,7 @@ describe('Voting service', () => {
     test('Return true if transaction hash is valid', () => {
       const dataProposal = 'testDataProposal';
       const testToeplitzGroupSignature = ['testToeplitzHash1', 'testToeplitzHash2', 'testToeplitzHash3'];
-      const transactionHash = 'cb5f67662f2ddc4eab325b88f705b0a5c643ab52f93e08098af74604ac36a7db';
+      const transactionHash = '2f317c9c3a12e343355c9f51195ee1464e8294bb0d3c98218dd6ea387427d6bf';
       const verification = votingService.verifyVote(dataProposal, testToeplitzGroupSignature, transactionHash);
       expect(verification).toBe(true);
     });
@@ -97,12 +97,12 @@ describe('Voting service', () => {
     test("Don't throw error", async () => {
       const peerQueue = [
         {
-          address: 'http://testAddress',
+          address: 'http://test-address',
           normalConnectionPort: '1',
           quantumConnectionPort: '2'
         },
         {
-          address: 'http://testAddress1',
+          address: 'http://test-address1',
           normalConnectionPort: '1',
           quantumConnectionPort: '2'
         }

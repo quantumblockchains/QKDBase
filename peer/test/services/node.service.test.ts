@@ -22,7 +22,7 @@ describe('Node service', () => {
   describe('getContiguousNodesAddresses', () => {
     test('Return my contiguous addresses', () => {
       const nodeAddress = {
-        address: 'testAddress',
+        address: 'test-address',
         normalConnectionPort: '1',
         quantumConnectionPort: '2'
       };
@@ -43,7 +43,7 @@ describe('Node service', () => {
         quantumConnectionPort
       };
       const nodeAddress = {
-        address: 'testAddress',
+        address: 'test-address',
         normalConnectionPort: '1',
         quantumConnectionPort: '2'
       };
@@ -56,7 +56,7 @@ describe('Node service', () => {
   describe('addNodeAddress', () => {
     test('Add node if unique address', () => {
       const nodeAddress = {
-        address: 'testAddress',
+        address: 'test-address',
         normalConnectionPort: '1',
         quantumConnectionPort: '2'
       };
@@ -67,7 +67,7 @@ describe('Node service', () => {
 
     test("Don't add node if not unique address", () => {
       const nodeAddress = {
-        address: 'testAddress',
+        address: 'test-address',
         normalConnectionPort: '1',
         quantumConnectionPort: '2'
       };

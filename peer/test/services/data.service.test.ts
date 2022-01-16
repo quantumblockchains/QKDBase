@@ -2,7 +2,7 @@ import { buildDataService } from '../../services/data.service';
 import { nodeService } from '../../services/node.service';
 import { server } from '../mock/http.service.mock';
 jest.spyOn(nodeService, 'getContiguousNodesAddresses').mockImplementation(() => [{
-  address: 'http://testAddress',
+  address: 'http://test-address',
   normalConnectionPort: '1',
   quantumConnectionPort: '2'
 }]);
@@ -10,9 +10,7 @@ jest.spyOn(nodeService, 'getContiguousNodesAddresses').mockImplementation(() => 
 
 describe('Data service', () => {
   let dataService: ReturnType<typeof buildDataService>;
-  beforeAll(() => {
-    dataService = buildDataService(nodeService);
-  });
+  beforeAll(() => dataService = buildDataService(nodeService));
 
   describe('setDataProposal', () => {
     test('Set data proposal if data proposal not set', () => {
@@ -42,21 +40,21 @@ describe('Data service', () => {
     });
   });
 
-  describe('sendDataProposalToAllPeers', () => {
+  describe('sendDataProposalWithGroupSignatureToAllPeers', () => {
     beforeAll(() => server.listen());
     afterEach(() => server.resetHandlers());
     afterAll(() => server.close());
 
     test('Throw error if data proposal not set ', async () => {
       const testToeplitzGroupSignature = ['testToeplitzHash1', 'testToeplitzHash2', 'testToeplitzHash3'];
-      const sendDataProposal = dataService.sendDataProposalToAllPeers(testToeplitzGroupSignature);
+      const sendDataProposal = dataService.sendDataProposalWithGroupSignatureToAllPeers(testToeplitzGroupSignature);
       await expect(sendDataProposal).rejects.toThrowError('Empty data proposal');
     });
 
     test("Don't throw error if data proposal set and sent", async () => {
       dataService.setDataProposal('testValue');
       const testToeplitzGroupSignature = ['testToeplitzHash1', 'testToeplitzHash2', 'testToeplitzHash3'];
-      const sendDataProposal = dataService.sendDataProposalToAllPeers(testToeplitzGroupSignature);
+      const sendDataProposal = dataService.sendDataProposalWithGroupSignatureToAllPeers(testToeplitzGroupSignature);
       await expect(sendDataProposal).resolves.toBeUndefined();
     });
   });

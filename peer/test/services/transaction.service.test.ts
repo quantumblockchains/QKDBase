@@ -3,9 +3,7 @@ import { buildTransactionService } from '../../services/transaction.service';
 
 describe('Transaction service', () => {
   let transactionService: ReturnType<typeof buildTransactionService>;
-  beforeAll(() => {
-    transactionService = buildTransactionService(nodeService);
-  });
+  beforeAll(() => transactionService = buildTransactionService(nodeService));
 
   describe('storeTransactionHash', () => {
     const testStoreTransactionHash = (valueToStore: string) => {

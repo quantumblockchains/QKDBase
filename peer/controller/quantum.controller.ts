@@ -19,7 +19,7 @@ export const getQuantumRoutes = (services: Services) => {
   router.post('/check-one-time-pad', jsonParser, (req, res) => {
     log('Received check one time pad request');
     const { nodeAddress } = req.body;
-    const oneTimePad = oneTimePadService.checkIfOneTimePadExists(nodeAddress);
+    const oneTimePad = oneTimePadService.getOneTimePadFromMapping(nodeAddress);
     log('Sending found one time pad');
     res.send({ oneTimePad });
   });

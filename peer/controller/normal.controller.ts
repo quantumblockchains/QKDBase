@@ -67,7 +67,7 @@ export const buildNormalRoutes = (services: Services, onSuccess: () => void, onE
       const toeplitzGroupSignature = toeplitzService.generateToeplitzGroupSignature(oneTimePadMapping, transaction);
       dataService.setDataProposal(transaction);
       const calculatedTransactionHash = addProposalPeerToToeplitzGroupSignature();
-      await dataService.sendDataProposalToAllPeers(toeplitzGroupSignature);
+      await dataService.sendDataProposalWithGroupSignatureToAllPeers(toeplitzGroupSignature);
       startVoting(calculatedTransactionHash);
     } catch (error) {
       console.error(error);
