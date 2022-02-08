@@ -45,6 +45,30 @@ const handlers = [
   rest.post('http://wrong-address:2/receive-one-time-pad', (_request, response) => {
     return response();
   }),
+  rest.post('http://testaddressFirst:2/check-toeplitz', (_request, response, ctx) => {
+    return response(
+      ctx.status(200),
+      ctx.json({ toeplitzMatrix: [[1,0,1],[1,1,0],[0,1,1]] })
+    );
+  }),
+  rest.post('http://testaddressFirst:2/receive-toeplitz', (_request, response, ctx) => {
+    return response(
+      ctx.status(200),
+      ctx.json({ toeplitzMatrix: [[1,0,1],[1,1,0],[0,1,1]] })
+    );
+  }),
+  rest.post('http://testaddressSecond:2/check-toeplitz', (_request, response, ctx) => {
+    return response(
+      ctx.status(200),
+      ctx.json({ toeplitzMatrix: null })
+    );
+  }),
+  rest.post('http://testaddressSecond:2/receive-toeplitz', (_request, response, ctx) => {
+    return response(
+      ctx.status(200),
+      ctx.json({ toeplitzMatrix: null})
+    );
+  })
 ];
 
 export const server = setupServer(...handlers);

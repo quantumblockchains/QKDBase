@@ -41,7 +41,7 @@ export const buildToeplitzService = (nodeService: NodeService) => {
       if (!!toeplitzMatrix && !compareToeplitzMatrixes(toeplitzMatrixFromMapping, toeplitzMatrix)) {
         throw Error('Non matching Toeplitz matrix');
       } else if (!toeplitzMatrix) {
-        generateAndSendToeplitzMatrix(transactionLength, nodeAddresses);
+        await generateAndSendToeplitzMatrix(transactionLength, nodeAddresses);
       }
     }
     return teoplitzMatrixesMapping;
@@ -58,13 +58,7 @@ export const buildToeplitzService = (nodeService: NodeService) => {
     const seedSize = 2 * transactionLength - 1;
     const binaryArray = generateRandomBinaryArray(seedSize);
     const toeplitzMatrix = generateToeplitzMatrix(binaryArray);
-    if (!isToeplitzMatrix(toeplitzMatrix)) {
-      throw Error('Invalid Toeplitz matrix');
-    }
-    teoplitzMatrixesMapping.push({
-      nodeAddress: nodeAddresses.address,
-      toeplitzMatrix,
-    });
+    addToeplitzMatrix(toeplitzMatrix, nodeAddresses.address);
     const myNodeAddress = getMyNodeAddresses();
     await sendTopelitzMatrix(nodeAddresses, toeplitzMatrix, myNodeAddress.address);
   };
@@ -121,6 +115,9 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 
   const addToeplitzMatrix = (toeplitzMatrix: number[][], nodeAddress: string) => {
     log('Adding established Toeplitz matrix');
+    if (!isToeplitzMatrix(toeplitzMatrix)) {
+      throw Error('Invalid Toeplitz matrix');
+    }
     teoplitzMatrixesMapping.push({
       nodeAddress,
       toeplitzMatrix
