@@ -23,8 +23,8 @@ export const buildToeplitzService = (nodeService: NodeService) => {
     compareToeplitzMatrixes,
     generateToeplitzMatrix,
     convertStringToBinary,
-    createMatrixFromStringAsBinary,
-    calculateModuloFromMatrixElements,
+    createVectorFromStringAsBinary,
+    calculateModuloFromVectorElements,
     calculateXor
   } = matrixMathService();
 
@@ -83,10 +83,10 @@ export const buildToeplitzService = (nodeService: NodeService) => {
     oneTimePad: number[]
   ) => {
     const transactionDataAsBinary = convertStringToBinary(data);
-    const transactionMatrix = matrix(createMatrixFromStringAsBinary(transactionDataAsBinary));
+    const transactionMatrix = matrix(createVectorFromStringAsBinary(transactionDataAsBinary));
     const toeplitzParsedMatrix = matrix(toeplitzMatrix);
     const multipliedMatrixes = multiply(toeplitzParsedMatrix, transactionMatrix);
-    const multipliedMatrixesModulo = calculateModuloFromMatrixElements(multipliedMatrixes.toArray() as number[][]);
+    const multipliedMatrixesModulo = calculateModuloFromVectorElements(multipliedMatrixes.toArray() as number[]);
     const parsedOneTimePad = oneTimePad.join('');
     return calculateXor(multipliedMatrixesModulo, parsedOneTimePad);
   };
