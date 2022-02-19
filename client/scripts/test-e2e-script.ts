@@ -1,5 +1,5 @@
-import { sendTransaction } from "../api";
-import { getFirstPeersAddresses } from "../utils";
+import { sendTransaction } from '../api';
+import { getFirstPeersAddresses } from '../utils';
 
 (() => {
 	try {

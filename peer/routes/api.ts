@@ -3,13 +3,13 @@ import { log } from '../../shared/utils/log';
 import { Services } from '../services/services';
 import { DataProposalRequest } from '../types';
 import { NodeAddress } from '../../shared/types';
-import { buildApiService } from './api.service';
+import { buildApiService } from '../services/api.service';
 
 export const buildApiRouter = (services: Services, onSuccess: () => void, onError: () => void) => {
 	const router = express.Router();
 	const jsonParser = express.json();
 
-	const controller = buildApiService(services);
+	const apiService = buildApiService(services);
 
 	const {
 		handleReceiveTransaction,
@@ -26,7 +26,7 @@ export const buildApiRouter = (services: Services, onSuccess: () => void, onErro
 		addOneTimePad,
 		fetchAndStoreQKDKey,
 		clearEverything
-	} = controller;
+	} = apiService;
   
 	router.post('/receive-transaction', jsonParser, async (req, res) => {
 		log('Received transaction');
@@ -70,8 +70,8 @@ export const buildApiRouter = (services: Services, onSuccess: () => void, onErro
 				res.send('Voting ended');
 				return;
 			}
-			const { peerQueue, transactionHash } = req.body;
-			await handleVerifyAndVote(peerQueue, transactionHash, onSuccess);
+			const { peerQueue, hashedSignature } = req.body;
+			await handleVerifyAndVote(peerQueue, hashedSignature, onSuccess);
 		} catch (error) {
 			console.error(error);
 			onError();

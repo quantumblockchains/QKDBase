@@ -10,6 +10,7 @@ import { matrixMathService } from './matrixMath.service';
 import { log } from '../../shared/utils/log';
 import { NodeService } from './node.service';
 import { NodeAddress } from '../../shared/types';
+import { computeHashedSignature } from '../utils/computeHashedSignature';
 
 export interface ToeplitzMatrixMapping {
   toeplitzMatrix: number[][];
@@ -73,7 +74,7 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		return toeplitzObjectFound?.toeplitzMatrix;
 	};
 
-	const computeToeplitzHash = (
+	const computeToeplitzSignature = (
 		data: string,
 		toeplitzMatrix: number[][],
 		oneTimePad: number[]
@@ -89,7 +90,7 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		return xorArray.join('');
 	};
 
-	const calculateToeplitzHash = (
+	const calculateHashedSignature = (
 		oneTimePadMapping: OneTimePadMapping[],
 		dataProposal: string,
 	) => {
@@ -97,24 +98,28 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		const teoplitzMatrixesMapping = getToeplitzMapping();
 		const { toeplitzMatrix } = teoplitzMatrixesMapping[0];
 		const { oneTimePad } = oneTimePadMapping[0];
-		return computeToeplitzHash(dataProposal, toeplitzMatrix, oneTimePad);
+		const toeplitzSignature = computeToeplitzSignature(dataProposal, toeplitzMatrix, oneTimePad);
+		const { address } = getMyNodeAddresses();
+		return computeHashedSignature(toeplitzSignature, address);
 	};
 
-	const generateToeplitzHash = (dataProposal: string) => {
+	const generateHashedSignature = (dataProposal: string) => {
 		const dataAsBinary = convertStringToBinary(dataProposal);
 		const seedSize = 2 * dataAsBinary.length - 1;
 		const binaryArray = generateRandomBinaryArray(seedSize);
 		const toeplitzMatrix = generateToeplitzMatrix(binaryArray);
 		const oneTimePad = generateRandomBinaryArray(dataAsBinary.length);
-		return computeToeplitzHash(dataProposal, toeplitzMatrix, oneTimePad);
+		const toeplitzSignature = computeToeplitzSignature(dataProposal, toeplitzMatrix, oneTimePad);
+		const { address } = getMyNodeAddresses();
+		return computeHashedSignature(toeplitzSignature, address);
 	};
 
 	const verifyToeplitzGroupSignature = (
 		toeplitzGroupSignature: string[],
-		toeplitzHash: string
+		toeplitzSignature: string
 	) => {
 		log('Verifying data proposal signature');
-		return toeplitzGroupSignature.some(hash => hash === toeplitzHash);
+		return toeplitzGroupSignature.some(signature => signature === toeplitzSignature);
 	};
 
 	const addToeplitzMatrix = (toeplitzMatrix: number[][], nodeAddress: string) => {
@@ -140,12 +145,13 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 			const oneTimeMap = oneTimePadMapping.filter(
 				(map) => map.nodeAddress === toeplitzMap.nodeAddress
 			)[0];
-			const toeplitzHash = computeToeplitzHash(
+			const toeplitzSignature = computeToeplitzSignature(
 				transaction,
 				toeplitzMap.toeplitzMatrix,
 				oneTimeMap.oneTimePad
 			);
-			addToeplitzHashToGroupSignature(toeplitzHash);
+			const hashedSignature = computeHashedSignature(toeplitzSignature, toeplitzMap.nodeAddress);
+			addHashedSignatureToGroupSignature(hashedSignature);
 		});
 		return toeplitzGroupSignature;
 	};
@@ -162,14 +168,14 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		}
 	};
 
-	const addToeplitzHashToGroupSignature = (toeplitzHash: string) => {
+	const addHashedSignatureToGroupSignature = (toeplitzSignature: string) => {
 		log('Adding Toeplitz Hash to Toeplitz Group Signature');
-		toeplitzGroupSignature.push(toeplitzHash);
+		toeplitzGroupSignature.push(toeplitzSignature);
 	};
 
-	const storeToeplitzGroupSignature = (toeplitzHashesReceived: string[]) => {
+	const storeToeplitzGroupSignature = (toeplitzSignatureesReceived: string[]) => {
 		log('Storing Toeplitz Group Signature');
-		toeplitzHashesReceived.forEach(toeplitzHash => toeplitzGroupSignature.push(toeplitzHash));
+		toeplitzSignatureesReceived.forEach(toeplitzSignature => toeplitzGroupSignature.push(toeplitzSignature));
 	};
 
 	const getToeplitzGroupSignature = () => [...toeplitzGroupSignature];
@@ -187,11 +193,11 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		checkIfToeplitzMatrixExists,
 		addToeplitzMatrix,
 		getToeplitzMapping,
-		calculateToeplitzHash,
-		generateToeplitzHash,
+		calculateHashedSignature,
+		generateHashedSignature,
 		verifyToeplitzGroupSignature,
 		generateToeplitzGroupSignature,
-		addToeplitzHashToGroupSignature,
+		addHashedSignatureToGroupSignature,
 		storeToeplitzGroupSignature,
 		sendToeplitzGroupSignatureToAllPeers,
 		getToeplitzGroupSignature,

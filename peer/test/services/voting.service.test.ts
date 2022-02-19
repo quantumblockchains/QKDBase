@@ -53,18 +53,24 @@ describe('Voting service', () => {
 
 	describe('verifyVote', () => {
 		test('Return false if transaction hash is invalid', () => {
-			const dataProposal = 'testDataProposal';
-			const testToeplitzGroupSignature = ['testToeplitzHash1', 'testToeplitzHash2', 'testToeplitzHash3'];
-			const transactionHash = 'invalidTransactionHash';
-			const verification = votingService.verifyVote(dataProposal, testToeplitzGroupSignature, transactionHash);
+			const testToeplitzGroupSignature = [
+				'invalidTestToeplitzSignature1',
+				'invalidTestToeplitzSignature2',
+				'invalidTestToeplitzSignature3'
+			];
+			const hashedSignature = 'invalidHashedSignature';
+			const verification = votingService.verifyVote(testToeplitzGroupSignature, hashedSignature);
 			expect(verification).toBe(false);
 		});
 
 		test('Return true if transaction hash is valid', () => {
-			const dataProposal = 'testDataProposal';
-			const testToeplitzGroupSignature = ['testToeplitzHash1', 'testToeplitzHash2', 'testToeplitzHash3'];
-			const transactionHash = '2f317c9c3a12e343355c9f51195ee1464e8294bb0d3c98218dd6ea387427d6bf';
-			const verification = votingService.verifyVote(dataProposal, testToeplitzGroupSignature, transactionHash);
+			const testToeplitzGroupSignature = [
+				'8fb3b5503c20deb8a9599f56f327596725d17738eacfc5a1ec66bffc69981c0d',
+				'2f317c9c3a12e343355c9f51195ee1464e8294bb0d3c98218dd6ea387427d6bf',
+				'e0ec3961c59165c71afd146123f48a2c815aa7fcdfd8f3eed2d6333bae822ca9'
+			];
+			const hashedSignature = '2f317c9c3a12e343355c9f51195ee1464e8294bb0d3c98218dd6ea387427d6bf';
+			const verification = votingService.verifyVote(testToeplitzGroupSignature, hashedSignature);
 			expect(verification).toBe(true);
 		});
 	});
@@ -104,7 +110,7 @@ describe('Voting service', () => {
 					port: '1',
 				}
 			];
-			const sendDataProposalWithGroupSignature = votingService.initializeVote(peerQueue, 'testTransactionHash');
+			const sendDataProposalWithGroupSignature = votingService.initializeVote(peerQueue, 'testHashedSignature');
 			await expect(sendDataProposalWithGroupSignature).resolves.toBeUndefined();
 		});
 	});

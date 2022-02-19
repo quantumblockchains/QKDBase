@@ -1,8 +1,8 @@
 import { shuffleArray } from '../utils/shuffleArray';
 import { wait } from '../utils/wait';
 import { log } from '../../shared/utils/log';
-import { Services } from '../services/services';
-import { matrixMathService } from '../services/matrixMath.service';
+import { Services } from './services';
+import { matrixMathService } from './matrixMath.service';
 import { NodeAddress } from '../../shared/types';
 import { shouldUseQKD } from '../utils/shouldUseQKD';
 
@@ -21,7 +21,7 @@ export const buildApiService = (services: Services) => {
 		toeplitzService.clearToeplitzGroupSignature();
 		toeplitzService.clearToeplitzMatrixesMapping();
 		oneTimePadService.clearOneTimePads();
-		transactionService.clearTransactionHash();
+		transactionService.clearHashedSignature();
 		dataService.clearDataProposal();
 		votingService.clearVotes();
 	};
@@ -37,27 +37,19 @@ export const buildApiService = (services: Services) => {
 			await oneTimePadService.establishOneTimePad(transactionAsBinaryLength);
 		}
 	};
-  
-	const generateHashedTransaction = (toeplitzHash: string) => {
-		const dataProposal = dataService.getDataProposal();
-		const calculatedTransactionHash = transactionService.calculateTransactionHash(dataProposal, toeplitzHash);
-		transactionService.storeTransactionHash(calculatedTransactionHash);
-		return calculatedTransactionHash;
-	};
-  
+
 	const addProposalPeerToToeplitzGroupSignature = () => {
 		const dataProposal = dataService.getDataProposal();
-		const toeplitzHash = toeplitzService.generateToeplitzHash(dataProposal);
-		const calculatedTransactionHash = generateHashedTransaction(toeplitzHash);
-		toeplitzService.addToeplitzHashToGroupSignature(toeplitzHash);
-		return calculatedTransactionHash;
+		const hashedSignature = toeplitzService.generateHashedSignature(dataProposal);
+		toeplitzService.addHashedSignatureToGroupSignature(hashedSignature);
+		return hashedSignature;
 	};
   
-	const startVoting = (calculatedTransactionHash: string) => {
+	const startVoting = (calculatedHashedSignature: string) => {
 		log('Starting voting, create peer queue');
 		const allNodesAddresses = nodeService.getAllNodesAddresses();
 		const randomPeerArray = shuffleArray(allNodesAddresses);
-		votingService.initializeVote(randomPeerArray, calculatedTransactionHash);
+		votingService.initializeVote(randomPeerArray, calculatedHashedSignature);
 	};
   
 	const waitForDataToPropagate = async () => {
@@ -72,9 +64,9 @@ export const buildApiService = (services: Services) => {
 		await establishNecessaryData(transaction);
 		const oneTimePadMapping = oneTimePadService.getOneTimePadMapping();
 		const toeplitzGroupSignature = toeplitzService.generateToeplitzGroupSignature(oneTimePadMapping, transaction);
-		const calculatedTransactionHash = addProposalPeerToToeplitzGroupSignature();
+		const calculatedHashedSignature = addProposalPeerToToeplitzGroupSignature();
 		await toeplitzService.sendToeplitzGroupSignatureToAllPeers(toeplitzGroupSignature);
-		startVoting(calculatedTransactionHash);
+		startVoting(calculatedHashedSignature);
 	};
 
 	const handleReceiveDataProposal = (dataProposal: string) => {
@@ -85,25 +77,25 @@ export const buildApiService = (services: Services) => {
 		votingService.setIsVoteEnded(false);
 		const oneTimePadMapping = oneTimePadService.getOneTimePadMapping();
 		const dataProposal = dataService.getDataProposal();
-		const calculatedToeplitzHash = toeplitzService.calculateToeplitzHash(oneTimePadMapping, dataProposal);
-		const isVerified = toeplitzService.verifyToeplitzGroupSignature(toeplitzGroupSignature, calculatedToeplitzHash);
+		const hashedSignature = toeplitzService.calculateHashedSignature(oneTimePadMapping, dataProposal);
+		const isVerified = toeplitzService.verifyToeplitzGroupSignature(toeplitzGroupSignature, hashedSignature);
+	
 		if (!isVerified) {
 			throw Error('Invalid data proposal signature');
 		} 
 		toeplitzService.storeToeplitzGroupSignature(toeplitzGroupSignature);
-		const calculatedTransactionHash = generateHashedTransaction(calculatedToeplitzHash);
-		startVoting(calculatedTransactionHash);
+		transactionService.storeHashedSignature(hashedSignature);
+		startVoting(hashedSignature);
 	};
   
 	const handleVerifyAndVote = async (
 		peerQueue: NodeAddress[],
-		transactionHash: string,
+		hashedSignature: string,
 		onSuccess: () => void
 	) => {
 		await waitForDataToPropagate();
-		const dataProposal = dataService.getDataProposal();
 		const toeplitzGroupSignature = toeplitzService.getToeplitzGroupSignature();
-		const isVerified = votingService.verifyVote(dataProposal, toeplitzGroupSignature, transactionHash);
+		const isVerified = votingService.verifyVote(toeplitzGroupSignature, hashedSignature);
 		if (!isVerified) {
 			throw Error('Non verified');
 		} 
@@ -112,10 +104,11 @@ export const buildApiService = (services: Services) => {
 		if (votingService.getVotes() >= 12) {
 			setVoteIsEnded();
 			onSuccess();
+			clearEverything();
 			await votingService.sendVotingFinishedToAllPeers();
 		} else {
 			if (peerQueue.length !== 0) {
-				votingService.initializeVote(peerQueue, transactionHash);
+				votingService.initializeVote(peerQueue, hashedSignature);
 			}
 		}
 	};

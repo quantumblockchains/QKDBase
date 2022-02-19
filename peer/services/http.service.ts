@@ -98,14 +98,14 @@ export const checkIfOneTimePadIsEstablished = async (
 export const sendVerifyAndVote = async (
 	nodeAddress: NodeAddress,
 	peerQueue: NodeAddress[],
-	transactionHash: string,
+	hashedSignature: string,
 ) => {
 	const { address, port} = nodeAddress;
 	const url = `${address}:${port}/verify-and-vote`;
 	const response = await got.post(url, {
 		json: {
 			peerQueue,
-			transactionHash,
+			hashedSignature,
 		},
 	});
 	return response;

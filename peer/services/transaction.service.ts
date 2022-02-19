@@ -1,33 +1,33 @@
-import { computeProposalHash } from '../utils/computeProposalHash';
+import { computeHashedSignature } from '../utils/computeHashedSignature';
 import { log } from '../../shared/utils/log';
 import { NodeService } from './node.service';
 
 export const buildTransactionService = (nodeService: NodeService) => {
-	let transactionHash: string | undefined;
+	let hashedSignature: string | undefined;
 
 	const { getMyNodeAddresses } = nodeService;
 
-	const calculateTransactionHash = (dataProposal: string, toeplitzHash: string) => {
+	const calculateHashedSignature = (toeplitzSignature: string) => {
 		log('Calculating my hashed transaction');
 		const myNodeAddress = getMyNodeAddresses();
-		return computeProposalHash(toeplitzHash, myNodeAddress, dataProposal);
+		return computeHashedSignature(toeplitzSignature, myNodeAddress.address);
 	};
 
-	const storeTransactionHash = (hashedTransaction: string) => {
+	const storeHashedSignature = (hashedTransaction: string) => {
 		log('Storing my hashed transaction');
-		transactionHash = hashedTransaction;
+		hashedSignature = hashedTransaction;
 	};
 
-	const getTransactionHash = () => transactionHash;
+	const getHashedSignature = () => hashedSignature;
 
-	const clearTransactionHash = () => {
-		transactionHash = undefined;
+	const clearHashedSignature = () => {
+		hashedSignature = undefined;
 	};
 
 	return {
-		calculateTransactionHash,
-		storeTransactionHash,
-		getTransactionHash,
-		clearTransactionHash,
+		calculateHashedSignature,
+		storeHashedSignature,
+		getHashedSignature,
+		clearHashedSignature,
 	};
 };

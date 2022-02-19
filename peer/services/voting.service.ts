@@ -1,4 +1,3 @@
-import { computeProposalHash } from '../utils/computeProposalHash';
 import { sendVotingFinished, sendAddVote, sendVerifyAndVote } from './http.service';
 import { log } from '../../shared/utils/log';
 import { NodeService } from './node.service';
@@ -10,25 +9,19 @@ export const buildVotingService = (nodeService: NodeService) => {
 
 	const { getAllNodesAddresses } = nodeService;
 
-	const initializeVote = async (peerQueue: NodeAddress[], transactionHash: string) => {
+	const initializeVote = async (peerQueue: NodeAddress[], hashedSignature: string) => {
 		log('Initializing voting');
 		const voter = peerQueue[0];
 		const restPeers = peerQueue.slice(1);
-		await sendVerifyAndVote(voter, restPeers, transactionHash);
+		await sendVerifyAndVote(voter, restPeers, hashedSignature);
 	};
 
 	const verifyVote = (
-		dataProposal: string,
 		toeplitzGroupSignature: string[],
-		transactionHash: string,
+		hashedSignature: string,
 	) => {
 		log('Verifying vote');
-		const allNodesAddresses = getAllNodesAddresses();
-		return allNodesAddresses.some(nodeAddress => {
-			const hashedTransactions = toeplitzGroupSignature
-				.map(hash => computeProposalHash(hash, nodeAddress, dataProposal));
-			return hashedTransactions.some(hash => transactionHash === hash);
-		});
+		return toeplitzGroupSignature.some(hash => hashedSignature === hash);
 	};
 
 	const addVote = () => {    

@@ -1,31 +1,31 @@
 import { nodeService } from '../../services/node.service';
-import { computeProposalHash } from '../../utils/computeProposalHash';
+import { computeHashedSignature } from '../../utils/computeHashedSignature';
 
-describe('computeProposalHash', () => {
-	const testComputeProposalHash = (teoplitzHash: string, transaction: string, valueExpected: string) => {
+describe('computeHashedSignature', () => {
+	const testComputeProposalHash = (toeplitzSignature: string, valueExpected: string) => {
 		const { getMyNodeAddresses } = nodeService;
 		const myNodeAddress = getMyNodeAddresses();
-		const valueCalculated = computeProposalHash(teoplitzHash, myNodeAddress, transaction);
+		const valueCalculated = computeHashedSignature(toeplitzSignature, myNodeAddress.address);
 		expect(valueCalculated).toBe(valueExpected);
 	};
 
 	test('Empty toeplitz hash and transaction', () => {
-		const valueExpected = 'd3e240ee4d41be180a84519a35dae379bf0891d12ad663afa04852ce386cbec3';
-		testComputeProposalHash('', '', valueExpected);
+		const valueExpected = 'e0d47519a9255b402f60d372607663e65708174d801754b5f49bad3ee1c80f29';
+		testComputeProposalHash('', valueExpected);
 	});
 
 	test('Empty toeplitz hash', () => {
-		const valueExpected = '922917b5cad6ecf12912eaddef72bcaadedee847588d9439defd033697491813';
-		testComputeProposalHash('', 'testTransaction', valueExpected);
+		const valueExpected = 'e0d47519a9255b402f60d372607663e65708174d801754b5f49bad3ee1c80f29';
+		testComputeProposalHash('', valueExpected);
 	});
 
 	test('Empty transaction', () => {
-		const valueExpected = '626ffe53966b7ad7bb4d6bfca2ab75235890b047b9daf6d58a8921dbfcc24a56';
-		testComputeProposalHash('testToeplitzhash', '', valueExpected);
+		const valueExpected = '888f75483f746860000ae97973a11c44336c79fbc95062c00c581d6ec302b153';
+		testComputeProposalHash('testToeplitzhash', valueExpected);
 	});
 
 	test('Non empty toeplitz hash and non empty transaction', () => {
-		const valueExpected = 'df0f304f405e292d31c04bd41b58b68607cee8482aba86e14bd8cb81ebd5b219';
-		testComputeProposalHash('testToeplitzhash', 'testTransaction', valueExpected);
+		const valueExpected = '888f75483f746860000ae97973a11c44336c79fbc95062c00c581d6ec302b153';
+		testComputeProposalHash('testToeplitzhash', valueExpected);
 	});
 });
