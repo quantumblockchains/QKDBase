@@ -1,7 +1,6 @@
-import { NodeAddresses } from "../../shared/types";
+import { NodeAddress } from '../../shared/types';
 
-export const compareNodeAddresses = (leftNodeAddresses: NodeAddresses, rightNodeADdresses: NodeAddresses) =>
-  leftNodeAddresses.address === rightNodeADdresses.address &&
-  leftNodeAddresses.normalConnectionPort === rightNodeADdresses.normalConnectionPort &&
-  leftNodeAddresses.quantumConnectionPort === rightNodeADdresses.quantumConnectionPort;
+export const compareNodeAddresses = (leftNodeAddresses: NodeAddress, rightNodeADdresses: NodeAddress) =>
+	leftNodeAddresses.address === rightNodeADdresses.address &&
+  leftNodeAddresses.port === rightNodeADdresses.port;
   

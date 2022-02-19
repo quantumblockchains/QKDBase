@@ -28,33 +28,34 @@ services:
     restart: on-failure 
     ports:
       - '3001:3016'
-      - '3002:3017'
     environment:
       - NODE_ADDRESS=http://peer_1
-      - NORMAL_CONNECTION_PORT=3016
-      - QUANTUM_CONNECTION_PORT=3017
+      - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
+      # In order to use QKD uncomment comments with QKD URLs
+      # - QKD_GET_KEY_URL=https://106.51.89.30:9090/api/v1/keys/quantumblockchains/enc_keys
+      # - QKD_GET_KEY_BY_ID_URL=https://106.51.89.30:9091/api/v1/keys/quantumblockchains/dec_keys
     container_name: peer_1
   peer_2:
     image: peer
     ports:
       - '3003:3016'
-      - '3004:3017'
     depends_on:
       - bootstrap_node
       - peer_1
     restart: on-failure 
     environment:
       - NODE_ADDRESS=http://peer_2
-      - NORMAL_CONNECTION_PORT=3016
-      - QUANTUM_CONNECTION_PORT=3017
+      - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
+      # In order to use QKD uncomment comments with QKD URLs
+      # - QKD_GET_KEY_URL=https://106.51.89.30:9090/api/v1/keys/quantumblockchains/enc_keys
+      # - QKD_GET_KEY_BY_ID_URL=https://106.51.89.30:9091/api/v1/keys/quantumblockchains/dec_keys
     container_name: peer_2
   peer_3:
     image: peer
     ports:
       - '3005:3016'
-      - '3006:3017'
     depends_on:
       - bootstrap_node
       - peer_1
@@ -62,15 +63,16 @@ services:
     restart: on-failure 
     environment:
       - NODE_ADDRESS=http://peer_3
-      - NORMAL_CONNECTION_PORT=3016
-      - QUANTUM_CONNECTION_PORT=3017
+      - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
+      # In order to use QKD uncomment comments with QKD URLs
+      # - QKD_GET_KEY_URL=https://106.51.89.30:9090/api/v1/keys/quantumblockchains/enc_keys
+      # - QKD_GET_KEY_BY_ID_URL=https://106.51.89.30:9091/api/v1/keys/quantumblockchains/dec_keys
     container_name: peer_3
   peer_4:
     image: peer
     ports:
       - '3007:3016'
-      - '3008:3017'
     depends_on:
       - bootstrap_node
       - peer_1
@@ -79,7 +81,9 @@ services:
     restart: on-failure 
     environment:
       - NODE_ADDRESS=http://peer_4
-      - NORMAL_CONNECTION_PORT=3016
-      - QUANTUM_CONNECTION_PORT=3017
+      - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
+      # In order to use QKD uncomment comments with QKD URLs
+      # - QKD_GET_KEY_URL=https://106.51.89.30:9090/api/v1/keys/quantumblockchains/enc_keys
+      # - QKD_GET_KEY_BY_ID_URL=https://106.51.89.30:9091/api/v1/keys/quantumblockchains/dec_keys
     container_name: peer_4

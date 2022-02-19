@@ -5,5 +5,5 @@ COPY package.json .
 RUN yarn
 COPY dist .
 
-EXPOSE 3016 3017
+EXPOSE 3016
 CMD [ "node", "peer/scripts/examplePeer.js" ]

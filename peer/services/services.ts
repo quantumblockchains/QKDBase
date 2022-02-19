@@ -4,22 +4,25 @@ import { buildOneTimePadService } from './oneTimePad.service';
 import { buildToeplitzService } from './toeplitz.service';
 import { buildTransactionService } from './transaction.service';
 import { buildVotingService } from './voting.service';
+import { buildQKDService } from './qkd.service';
 
 export const buildServices = (): Services => {
-  const dataService = buildDataService(nodeService);
-  const oneTimePadService = buildOneTimePadService(nodeService);
-  const toeplitzService = buildToeplitzService(nodeService);
-  const transactionService = buildTransactionService(nodeService);
-  const votingService = buildVotingService(nodeService);
+	const dataService = buildDataService(nodeService);
+	const oneTimePadService = buildOneTimePadService(nodeService);
+	const toeplitzService = buildToeplitzService(nodeService);
+	const transactionService = buildTransactionService(nodeService);
+	const votingService = buildVotingService(nodeService);
+	const qkdService = buildQKDService(nodeService, oneTimePadService);
   
-  return {
-    nodeService,
-    dataService,
-    oneTimePadService,
-    toeplitzService,
-    transactionService,
-    votingService
-  };
+	return {
+		nodeService,
+		dataService,
+		oneTimePadService,
+		toeplitzService,
+		transactionService,
+		votingService,
+		qkdService
+	};
 };
 
 export interface Services {
@@ -29,4 +32,5 @@ export interface Services {
   toeplitzService: ReturnType<typeof buildToeplitzService>,
   transactionService: ReturnType<typeof buildTransactionService>,
   votingService: ReturnType<typeof buildVotingService>
+  qkdService: ReturnType<typeof buildQKDService>
 }

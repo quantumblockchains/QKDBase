@@ -1,67 +1,63 @@
 import dotenv from 'dotenv';
 import { getNodesAddressesFromBootstrap } from './http.service';
 import { compareNodeAddresses } from '../utils/compareNodeAddresses';
-import { NodeAddresses } from '../../shared/types';
+import { NodeAddress } from '../../shared/types';
 dotenv.config();
 
 export const nodeService = (() => {
-  let nodes = [{
-    address: process.env.NODE_ADDRESS,
-    normalConnectionPort: process.env.NORMAL_CONNECTION_PORT,
-    quantumConnectionPort: process.env.QUANTUM_CONNECTION_PORT
-  }] as NodeAddresses[];
+	let nodes = [{
+		address: process.env.NODE_ADDRESS,
+		port: process.env.PORT,
+	}] as NodeAddress[];
 
-  const getNodesFromBootstrap = async () => {
-    const nodesAddresses = await getNodesAddressesFromBootstrap();
-    nodesAddresses.forEach(addNodeAddress);
-  };
+	const getNodesFromBootstrap = async () => {
+		const nodesAddresses = await getNodesAddressesFromBootstrap();
+		nodesAddresses.forEach(addNodeAddress);
+	};
 
-  const addNodeAddress = (nodeAddresses: NodeAddresses) => {
-    if (nodes.every(node => !compareNodeAddresses(node, nodeAddresses))) {
-      nodes.push(nodeAddresses);
-    }
-  };
+	const addNodeAddress = (nodeAddress: NodeAddress) => {
+		if (nodes.every(node => !compareNodeAddresses(node, nodeAddress))) {
+			nodes.push(nodeAddress);
+		}
+	};
 
-  const getContiguousNodesAddresses = () => {
-    return nodes.filter(node => { 
-      const myNodeAddress = getMyNodeAddresses();
-      return !compareNodeAddresses(node, myNodeAddress);
-    });
-  };
+	const getContiguousNodesAddresses = () => {
+		return nodes.filter(node => { 
+			const myNodeAddress = getMyNodeAddresses();
+			return !compareNodeAddresses(node, myNodeAddress);
+		});
+	};
 
-  const getMyNodeAddresses = () => {
-    const address = process.env.NODE_ADDRESS;
-    const normalConnectionPort = process.env.NORMAL_CONNECTION_PORT;
-    const quantumConnectionPort = process.env.QUANTUM_CONNECTION_PORT;
+	const getMyNodeAddresses = () => {
+		const address = process.env.NODE_ADDRESS;
+		const port = process.env.PORT;
     
-    if (!(address && normalConnectionPort && quantumConnectionPort)) {
-      throw Error('Missing my node configuration');
-    }
-    return {
-      address,
-      normalConnectionPort,
-      quantumConnectionPort
-    };
-  };
+		if (!(address && port)) {
+			throw Error('Missing my node configuration');
+		}
+		return {
+			address,
+			port,
+		};
+	};
 
-  const getAllNodesAddresses = () => [...nodes];
+	const getAllNodesAddresses = () => [...nodes];
 
-  const clearNodesAddresses = () => {
-    nodes = [{
-      address: process.env.NODE_ADDRESS,
-      normalConnectionPort: process.env.NORMAL_CONNECTION_PORT,
-      quantumConnectionPort: process.env.QUANTUM_CONNECTION_PORT
-    }] as NodeAddresses[];
-  };
+	const clearNodesAddresses = () => {
+		nodes = [{
+			address: process.env.NODE_ADDRESS,
+			port: process.env.PORT,
+		}] as NodeAddress[];
+	};
 
-  return {
-    getNodesFromBootstrap,
-    addNodeAddress,
-    getContiguousNodesAddresses,
-    getMyNodeAddresses,
-    getAllNodesAddresses,
-    clearNodesAddresses
-  };
+	return {
+		getNodesFromBootstrap,
+		addNodeAddress,
+		getContiguousNodesAddresses,
+		getMyNodeAddresses,
+		getAllNodesAddresses,
+		clearNodesAddresses
+	};
 })();
 
 export type NodeService = typeof nodeService;

@@ -18,6 +18,7 @@
     "ignorePatterns": ["*/dist/*", "demo/*"],
     "rules": {
         "max-len": ["error", { "code": 120 }],
-        "semi": [2, "always"]
+        "semi": [2, "always"],
+        "indent": ["error", "tab"]
     }
 }

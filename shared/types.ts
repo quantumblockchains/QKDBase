@@ -1,5 +1,11 @@
-export interface NodeAddresses {
+export interface NodeAddress {
   address: string;
-  normalConnectionPort: string;
-  quantumConnectionPort: string;
+  port: string;
+}
+
+export interface QKDGetKeyResponse {
+  keys: {
+    key_ID: string;
+    key: string;
+  }[];
 }

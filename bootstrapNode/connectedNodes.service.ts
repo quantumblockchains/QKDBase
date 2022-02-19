@@ -1,27 +1,27 @@
 import got from 'got';
-import { NodeAddresses } from '../shared/types';
+import { NodeAddress } from '../shared/types';
 
 export const connectedNodesService = () => {
-  const connectedNodes: NodeAddresses[] = [];
+	const connectedNodes: NodeAddress[] = [];
 
-  const addNode = (nodeAddresses: NodeAddresses) => connectedNodes.push(nodeAddresses);
+	const addNode = (nodeAddress: NodeAddress) => connectedNodes.push(nodeAddress);
 
-  const getConnectedNodes = () => [...connectedNodes];
+	const getConnectedNodes = () => [...connectedNodes];
 
-  const sendAddNodeAddressToAll = async (nodeAddresses: NodeAddresses) => {
-    for (const node of connectedNodes) {
-      const url = `${node.address}:${node.normalConnectionPort}/add-node`;
-      await got.post(url, {
-        json: {
-          nodeAddresses
-        },
-      });
-    }
-  };
+	const sendAddNodeAddressToAll = async (nodeAddress: NodeAddress) => {
+		for (const node of connectedNodes) {
+			const url = `${node.address}:${node.port}/add-node`;
+			await got.post(url, {
+				json: {
+					nodeAddress
+				},
+			});
+		}
+	};
 
-  return {
-    addNode,
-    getConnectedNodes,
-    sendAddNodeAddressToAll
-  };
+	return {
+		addNode,
+		getConnectedNodes,
+		sendAddNodeAddressToAll
+	};
 };
