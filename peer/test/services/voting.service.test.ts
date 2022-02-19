@@ -104,8 +104,8 @@ describe('Voting service', () => {
 					port: '1',
 				}
 			];
-			const sendDataProposal = votingService.initializeVote(peerQueue, 'testTransactionHash');
-			await expect(sendDataProposal).resolves.toBeUndefined();
+			const sendDataProposalWithGroupSignature = votingService.initializeVote(peerQueue, 'testTransactionHash');
+			await expect(sendDataProposalWithGroupSignature).resolves.toBeUndefined();
 		});
 	});
 });

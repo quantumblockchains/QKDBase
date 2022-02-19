@@ -1,6 +1,10 @@
 import { Matrix, matrix, multiply, xor } from 'mathjs';
 import { generateRandomBinaryArray } from '../utils/generateRandomBinaryArray';
-import { checkIfToeplitzMatrixIsEstablished, sendTopelitzMatrix } from './http.service';
+import { 
+	checkIfToeplitzMatrixIsEstablished,
+	sendToeplitzGroupSignature,
+	sendTopelitzMatrix
+} from './http.service';
 import { OneTimePadMapping } from './oneTimePad.service';
 import { matrixMathService } from './matrixMath.service';
 import { log } from '../../shared/utils/log';
@@ -146,6 +150,18 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		return toeplitzGroupSignature;
 	};
 
+	const sendToeplitzGroupSignatureToAllPeers = async (toeplitzGroupSignature: string[]) => {
+		log('Sending Toeplitz Group Signature to peers');
+		const contiguousNodesAddresses = getContiguousNodesAddresses();
+		for (const nodeAddress of contiguousNodesAddresses) {
+			if (!toeplitzGroupSignature) {
+				throw Error('No Toeplitz Group Signature');
+			} else {
+				await sendToeplitzGroupSignature(nodeAddress, toeplitzGroupSignature);
+			}
+		}
+	};
+
 	const addToeplitzHashToGroupSignature = (toeplitzHash: string) => {
 		log('Adding Toeplitz Hash to Toeplitz Group Signature');
 		toeplitzGroupSignature.push(toeplitzHash);
@@ -177,6 +193,7 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		generateToeplitzGroupSignature,
 		addToeplitzHashToGroupSignature,
 		storeToeplitzGroupSignature,
+		sendToeplitzGroupSignatureToAllPeers,
 		getToeplitzGroupSignature,
 		clearToeplitzGroupSignature,
 		clearToeplitzMatrixesMapping,

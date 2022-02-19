@@ -7,14 +7,14 @@ export const buildDataService = (nodeService: NodeService) => {
 
 	const { getContiguousNodesAddresses } = nodeService;
 
-	const sendDataProposalWithGroupSignatureToAllPeers = async (toeplitzGroupSignature: string[]) => {
+	const sendDataProposalToAllPeers = async () => {
 		log('Sending data proposal to peers');
 		const contiguousNodesAddresses = getContiguousNodesAddresses();
 		for (const nodeAddress of contiguousNodesAddresses) {
 			if (!dataProposal) {
 				throw Error('Empty data proposal');
 			} else {
-				await sendDataProposal(nodeAddress, dataProposal, toeplitzGroupSignature);
+				await sendDataProposal(nodeAddress, dataProposal);
 			}
 		}
 	};
@@ -40,7 +40,7 @@ export const buildDataService = (nodeService: NodeService) => {
 	};
 
 	return {
-		sendDataProposalWithGroupSignatureToAllPeers,
+		sendDataProposalToAllPeers,
 		setDataProposal,
 		getDataProposal,
 		clearDataProposal

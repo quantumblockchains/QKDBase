@@ -14,6 +14,7 @@ export const buildApiRouter = (services: Services, onSuccess: () => void, onErro
 	const {
 		handleReceiveTransaction,
 		handleReceiveDataProposal,
+		handleReceiveToeplitzGroupSignature,
 		handleVerifyAndVote,
 		isVoteEnded,
 		addVote,
@@ -41,16 +42,27 @@ export const buildApiRouter = (services: Services, onSuccess: () => void, onErro
 	router.post('/receive-data-proposal', jsonParser, async (req, res) => {
 		log('Received data proposal');
 		try {
-			const { dataProposal, toeplitzGroupSignature }: DataProposalRequest = req.body;
-			handleReceiveDataProposal(dataProposal, toeplitzGroupSignature);
+			const { dataProposal }: DataProposalRequest = req.body;
+			handleReceiveDataProposal(dataProposal);
 		} catch (error) {
 			console.error(error);
 			onError();
 		}
 		res.send('Received data proposal');
 	});
-  
 
+	router.post('/receive-toeplitz-group-signature', jsonParser, async (req, res) => {
+		log('Received Toeplitz Group Signature');
+		try {
+			const { toeplitzGroupSignature }: DataProposalRequest = req.body;
+			handleReceiveToeplitzGroupSignature(toeplitzGroupSignature);
+		} catch (error) {
+			console.error(error);
+			onError();
+		}
+		res.send('Received Toeplitz Group Signature');
+	});
+  
 	router.post('/verify-and-vote', jsonParser, async (req, res) => {
 		log('My turn to verify and vote');
 		try {

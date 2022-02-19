@@ -55,13 +55,25 @@ export const sendOneTimePad = async (
 export const sendDataProposal = async (
 	nodeAddress: NodeAddress,
 	dataProposal: string,
-	toeplitzGroupSignature: string[]
 ) => {
 	const { address, port} = nodeAddress;
 	const url = `${address}:${port}/receive-data-proposal`;
 	const response = await got.post(url, {
 		json: {
 			dataProposal,
+		},
+	});
+	return response;
+};
+
+export const sendToeplitzGroupSignature = async (
+	nodeAddress: NodeAddress,
+	toeplitzGroupSignature: string[]
+) => {
+	const { address, port} = nodeAddress;
+	const url = `${address}:${port}/receive-toeplitz-group-signature`;
+	const response = await got.post(url, {
+		json: {
 			toeplitzGroupSignature,
 		},
 	});
