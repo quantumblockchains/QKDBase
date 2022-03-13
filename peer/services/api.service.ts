@@ -1,4 +1,3 @@
-import { shuffleArray } from '../utils/shuffleArray';
 import { wait } from '../utils/wait';
 import { log } from '../../shared/utils/log';
 import { Services } from './services';
@@ -14,7 +13,8 @@ export const buildApiService = (services: Services) => {
 		toeplitzService,
 		transactionService, 
 		votingService,
-		qkdService
+		qkdService,
+		qrngService,
 	} = services;
   
 	const clearEverything = () => {
@@ -45,10 +45,9 @@ export const buildApiService = (services: Services) => {
 		return hashedSignature;
 	};
   
-	const startVoting = (calculatedHashedSignature: string) => {
+	const startVoting = async (calculatedHashedSignature: string) => {
 		log('Starting voting, create peer queue');
-		const allNodesAddresses = nodeService.getAllNodesAddresses();
-		const randomPeerArray = shuffleArray(allNodesAddresses);
+		const randomPeerArray = await qrngService.generateRandomArrayOfNodes();
 		votingService.initializeVote(randomPeerArray, calculatedHashedSignature);
 	};
   

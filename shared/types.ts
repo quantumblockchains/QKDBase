@@ -9,3 +9,15 @@ export interface QKDGetKeyResponse {
     key: string;
   }[];
 }
+
+export interface QRNGGetRandomArrayResponse {
+  data: {
+      result: number[];
+      QuantisRead: number;
+      ExecuteTime: string;
+  },
+  error: string;
+  message: string;
+  timestamp: string;
+  status: number;
+}

@@ -2,7 +2,7 @@ import got from 'got';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
-import { NodeAddress, QKDGetKeyResponse } from '../../shared/types';
+import { QRNGGetRandomArrayResponse, NodeAddress, QKDGetKeyResponse } from '../../shared/types';
 dotenv.config();
 
 export const checkIfToeplitzMatrixIsEstablished = async (
@@ -176,7 +176,7 @@ export const sendQKDKeyId = async (nodeAddress: NodeAddress, keyId: string) => {
 export const getQKDKeyById = async (keyId: string) => {
 	const url = process.env.QKD_GET_KEY_BY_ID_URL;
 	if (url) {
-		const response = await got.post(url, {
+		const { body } = await got.post<QKDGetKeyResponse>(url, {
 			json: { 
 				key_IDs: [
 					{
@@ -191,10 +191,24 @@ export const getQKDKeyById = async (keyId: string) => {
 				certificate: fs.readFileSync(path.join(__dirname, '../certs/clientB.crt'))
 			}
 		});
-		const body = response.body as QKDGetKeyResponse;
 		return {
 			key: body.keys[0].key,
 			keyId: body.keys[0].key_ID
 		};
+	}
+};
+
+export const getQRNGRandomArray = async ({
+	length,
+	min,
+	max
+}: { length: number, min: number, max: number }) => {
+	const url = process.env.QRNG_GET_RANDOM_ARRAY_URL;
+	const apiKey = process.env.QRNG_GET_RANDOM_ARRAY_API_KEY;
+	if (url) {
+		const urlWithParams = `${url}/${apiKey}/block/short?size=${length}&min=${min}&max=${max}`;
+		const { body } = await got.get(urlWithParams);
+		const parsedBody = JSON.parse(body) as QRNGGetRandomArrayResponse;
+		return parsedBody.data.result;
 	}
 };
