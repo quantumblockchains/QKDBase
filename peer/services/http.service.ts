@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { QRNGGetRandomArrayResponse, NodeAddress, QKDGetKeyResponse } from '../../shared/types';
+import { Block } from '../types';
 dotenv.config();
 
 export const checkIfToeplitzMatrixIsEstablished = async (
@@ -56,11 +57,25 @@ export const sendDataProposal = async (
 	nodeAddress: NodeAddress,
 	dataProposal: string,
 ) => {
-	const { address, port} = nodeAddress;
+	const { address, port } = nodeAddress;
 	const url = `${address}:${port}/receive-data-proposal`;
 	const response = await got.post(url, {
 		json: {
 			dataProposal,
+		},
+	});
+	return response;
+};
+
+export const sendBlockProposal = async (
+	nodeAddress: NodeAddress,
+	blockProposal: Block,
+) => {
+	const { address, port } = nodeAddress;
+	const url = `http://${address}:${port}/receive-block-proposal`;
+	const response = await got.post(url, {
+		json: {
+			blockProposal,
 		},
 	});
 	return response;
