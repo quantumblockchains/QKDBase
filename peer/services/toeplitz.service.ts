@@ -29,6 +29,7 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		generateToeplitzMatrix,
 		convertStringToBinary,
 		calculateModuloFromMatrixElements,
+		toeplitzMatrixToVector,
 	} = matrixMathService();
 
 	const establishToeplitzMatrix = async (transactionLength: number) => {
@@ -63,7 +64,8 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		const toeplitzMatrix = generateToeplitzMatrix(binaryArray);
 		addToeplitzMatrix(toeplitzMatrix, nodeAddress.address);
 		const myNodeAddress = getMyNodeAddresses();
-		await sendTopelitzMatrix(nodeAddress, toeplitzMatrix, myNodeAddress.address);
+		const toeplitzVector = toeplitzMatrixToVector(toeplitzMatrix);
+		await sendTopelitzMatrix(nodeAddress, toeplitzVector, myNodeAddress.address);
 	};
 
 	const checkIfToeplitzMatrixExists = (nodeAddress: string) => {

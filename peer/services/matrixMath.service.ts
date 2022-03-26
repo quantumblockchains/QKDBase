@@ -76,11 +76,20 @@ export const matrixMathService = () => {
 
 	const calculateModuloFromMatrixElements = (vector: Matrix) => vector.map(element => element % 2);
 
+	const toeplitzMatrixToVector = (toeplitzMatrix: number[][]) => {
+		const vector = toeplitzMatrix[0].map((x) => x);
+		for (let row = 1; row < toeplitzMatrix.length; row ++) {
+			vector.push(toeplitzMatrix[row][0]);
+		}
+		return vector;
+	};
+
 	return {
 		isToeplitzMatrix,
 		compareToeplitzMatrixes,
 		generateToeplitzMatrix,
 		convertStringToBinary,
-		calculateModuloFromMatrixElements
+		calculateModuloFromMatrixElements,
+		toeplitzMatrixToVector
 	};
 };

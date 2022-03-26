@@ -6,7 +6,8 @@ const {
 	compareToeplitzMatrixes,
 	generateToeplitzMatrix,
 	convertStringToBinary,
-	calculateModuloFromMatrixElements
+	calculateModuloFromMatrixElements,
+	toeplitzMatrixToVector
 } = matrixMathService();
 
 describe('Checks if object is Toeplitz matrix',() => {
@@ -116,4 +117,15 @@ describe('Calculate Modulo From Matrix Elements', () => {
 		expect(modulo.toArray()).toStrictEqual(zerosVector);
 	});
 });
+
+describe('Converts Toeplitz matrix to vector', () => {
+	test('Toeplitz Matrix should be converted to vector which was used to generate that matrix', () => {
+		const testVector = [1,2,3,4,5,6,7];
+		const toeplitxMatrix = generateToeplitzMatrix(testVector);	
+		const outVector = toeplitzMatrixToVector(toeplitxMatrix);
+		expect(outVector).toStrictEqual(testVector);
+	});
+});
+
+
 

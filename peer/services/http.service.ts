@@ -22,14 +22,14 @@ export const checkIfToeplitzMatrixIsEstablished = async (
 
 export const sendTopelitzMatrix = async (
 	nodeAddress: NodeAddress,
-	toeplitzMatrix: number[][],
+	toeplitzVector: number[],
 	myNodeAddress: string
 ) => {
 	const { address, port } = nodeAddress;
 	const url = `${address}:${port}/receive-toeplitz`;
 	const response = await got.post(url, {
 		json: {
-			toeplitzMatrix,
+			toeplitzVector,
 			nodeAddress: myNodeAddress,
 		},
 	});

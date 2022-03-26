@@ -127,8 +127,8 @@ export const buildApiRouter = (services: Services, onSuccess: () => void, onErro
 	router.post('/receive-toeplitz', jsonParser, async (req, res) => {
 		log('Received request to store established Toeplitz matrix');
 		try {
-			const { toeplitzMatrix, nodeAddress } = req.body;
-			addToeplitzMatrix(toeplitzMatrix, nodeAddress);
+			const { toeplitzVector, nodeAddress } = req.body;
+			addToeplitzMatrix(toeplitzVector, nodeAddress);
 		} catch (error) {
 			console.error(error);
 		}

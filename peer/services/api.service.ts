@@ -25,7 +25,7 @@ export const buildApiService = (services: Services) => {
 		dataService.clearDataProposal();
 		votingService.clearVotes();
 	};
-	const { convertStringToBinary } = matrixMathService();
+	const { convertStringToBinary, generateToeplitzMatrix } = matrixMathService();
   
 	const establishNecessaryData = async (transaction: string) => {
 		const transactionAsBinaryLength = convertStringToBinary(transaction).length;
@@ -124,8 +124,10 @@ export const buildApiService = (services: Services) => {
 
 	const getOneTimePad = (nodeAddress: string) => oneTimePadService.getOneTimePadFromMapping(nodeAddress);
 
-	const addToeplitzMatrix = (toeplitzMatrix: number[][], nodeAddress: string) =>
+	const addToeplitzMatrix = (toeplitzVector: number[], nodeAddress: string) => {
+		const toeplitzMatrix = generateToeplitzMatrix(toeplitzVector);
 		toeplitzService.addToeplitzMatrix(toeplitzMatrix, nodeAddress);
+	};
 
 	const addOneTimePad = (oneTimePad: number[], nodeAddress: string) => 
 		oneTimePadService.addOneTimePad(oneTimePad, nodeAddress);
