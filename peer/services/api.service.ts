@@ -4,6 +4,8 @@ import { Services } from './services';
 import { matrixMathService } from './matrixMath.service';
 import { NodeAddress } from '../../shared/types';
 import { shouldUseQKD } from '../utils/shouldUseQKD';
+import { shouldUseQRNG } from '../utils/shouldUseQRNG';
+import { shuffleArray } from '../utils/shuffleArray';
 
 export const buildApiService = (services: Services) => {
 	const {
@@ -47,7 +49,12 @@ export const buildApiService = (services: Services) => {
   
 	const startVoting = async (calculatedHashedSignature: string) => {
 		log('Starting voting, create peer queue');
-		const randomPeerArray = await qrngService.generateRandomArrayOfNodes();
+		let randomPeerArray = nodeService.getAllNodesAddresses();
+		if (shouldUseQRNG) {
+			randomPeerArray = await qrngService.generateRandomArrayOfNodes();
+		} else {
+			randomPeerArray = shuffleArray(randomPeerArray);
+		}
 		votingService.initializeVote(randomPeerArray, calculatedHashedSignature);
 	};
   

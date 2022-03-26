@@ -169,7 +169,7 @@ export const sendQKDKeyId = async (nodeAddress: NodeAddress, keyId: string) => {
 	await got.post(url, {
 		json: {
 			keyId,
-		},
+		}
 	});
 };
 
@@ -207,7 +207,7 @@ export const getQRNGRandomArray = async ({
 	const apiKey = process.env.QRNG_GET_RANDOM_ARRAY_API_KEY;
 	if (url) {
 		const urlWithParams = `${url}/${apiKey}/block/short?size=${length}&min=${min}&max=${max}`;
-		const { body } = await got.get(urlWithParams);
+		const { body } = await got.get(urlWithParams, { rejectUnauthorized: false });
 		const parsedBody = JSON.parse(body) as QRNGGetRandomArrayResponse;
 		return parsedBody.data.result;
 	}

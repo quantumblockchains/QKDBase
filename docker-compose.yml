@@ -32,7 +32,7 @@ services:
       - NODE_ADDRESS=http://peer_1
       - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
-      - QRNG_GET_RANDOM_ARRAY_URL=http://193.28.230.254:8080
+      - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
       - QRNG_GET_RANDOM_ARRAY_API_KEY=9627fecf-f335-41b3-9560-82875c80afe9
       # In order to use QKD uncomment comments with QKD URLs
       # - QKD_GET_KEY_URL=https://122.166.172.56:9090/api/v1/keys/quantumblockchains/enc_keys
@@ -50,7 +50,7 @@ services:
       - NODE_ADDRESS=http://peer_2
       - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
-      - QRNG_GET_RANDOM_ARRAY_URL=http://193.28.230.254:8080
+      - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
       - QRNG_GET_RANDOM_ARRAY_API_KEY=9627fecf-f335-41b3-9560-82875c80afe9
       # In order to use QKD uncomment comments with QKD URLs
       # - QKD_GET_KEY_URL=https://122.166.172.56:9090/api/v1/keys/quantumblockchains/enc_keys
@@ -69,7 +69,7 @@ services:
       - NODE_ADDRESS=http://peer_3
       - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
-      - QRNG_GET_RANDOM_ARRAY_URL=http://193.28.230.254:8080
+      - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
       - QRNG_GET_RANDOM_ARRAY_API_KEY=9627fecf-f335-41b3-9560-82875c80afe9
       # In order to use QKD uncomment comments with QKD URLs
       # - QKD_GET_KEY_URL=https://122.166.172.56:9090/api/v1/keys/quantumblockchains/enc_keys
@@ -89,7 +89,7 @@ services:
       - NODE_ADDRESS=http://peer_4
       - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
-      - QRNG_GET_RANDOM_ARRAY_URL=http://193.28.230.254:8080
+      - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
       - QRNG_GET_RANDOM_ARRAY_API_KEY=9627fecf-f335-41b3-9560-82875c80afe9
       # In order to use QKD uncomment comments with QKD URLs
       # - QKD_GET_KEY_URL=https://122.166.172.56:9090/api/v1/keys/quantumblockchains/enc_keys
