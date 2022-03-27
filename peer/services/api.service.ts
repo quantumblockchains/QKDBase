@@ -6,10 +6,12 @@ import { NodeAddress } from '../../shared/types';
 import { shouldUseQKD } from '../utils/shouldUseQKD';
 import { shouldUseQRNG } from '../utils/shouldUseQRNG';
 import { shuffleArray } from '../utils/shuffleArray';
+import { Block } from '../types';
 
 export const buildApiService = (services: Services) => {
 	const {
-		dataService,
+		blockService,
+		blockchainService,
 		nodeService,
 		oneTimePadService,
 		toeplitzService,
@@ -24,14 +26,14 @@ export const buildApiService = (services: Services) => {
 		toeplitzService.clearToeplitzMatrixesMapping();
 		oneTimePadService.clearOneTimePads();
 		transactionService.clearHashedSignature();
-		dataService.clearDataProposal();
+		blockService.clearBlockProposal();
 		votingService.clearVotes();
 	};
 	const { convertStringToBinary, generateToeplitzMatrix } = matrixMathService();
   
 	const establishNecessaryData = async (transaction: string) => {
 		const transactionAsBinaryLength = convertStringToBinary(transaction).length;
-		await dataService.sendDataProposalToAllPeers();
+		await blockService.sendBlockProposalToAllPeers();
 		await toeplitzService.establishToeplitzMatrix(transactionAsBinaryLength);
 		if (shouldUseQKD) {
 			await qkdService.establishOneTimePadWithQKD(transaction.length);
@@ -41,7 +43,11 @@ export const buildApiService = (services: Services) => {
 	};
 
 	const addProposalPeerToToeplitzGroupSignature = () => {
-		const dataProposal = dataService.getDataProposal();
+		const blockProposal = blockService.getBlockProposal();
+		const dataProposal = blockProposal?.data;
+		if (!dataProposal) {
+			throw Error('No data in block proposal');
+		}
 		const hashedSignature = toeplitzService.generateHashedSignature(dataProposal);
 		toeplitzService.addHashedSignatureToGroupSignature(hashedSignature);
 		return hashedSignature;
@@ -61,12 +67,12 @@ export const buildApiService = (services: Services) => {
 	const waitForDataToPropagate = async () => {
 		log('Waiting for data to propagate');
 		await wait(() => toeplitzService.getToeplitzGroupSignature().length === 4, 500);
-		await wait(() => !!dataService.getDataProposal(), 500);
+		await wait(() => !!blockService.getBlockProposal(), 500);
 	};
 
 	const handleReceiveTransaction = async (transaction: string) => {
 		votingService.setIsVoteEnded(false);
-		dataService.setDataProposal(transaction);
+		blockService.createBlockProposal(transaction, blockchainService.getLastBlock());
 		await establishNecessaryData(transaction);
 		const oneTimePadMapping = oneTimePadService.getOneTimePadMapping();
 		const toeplitzGroupSignature = toeplitzService.generateToeplitzGroupSignature(oneTimePadMapping, transaction);
@@ -75,14 +81,18 @@ export const buildApiService = (services: Services) => {
 		startVoting(calculatedHashedSignature);
 	};
 
-	const handleReceiveDataProposal = (dataProposal: string) => {
-		dataService.setDataProposal(dataProposal);
+	const handleReceiveBlockProposal = (blockProposal: Block) => {
+		blockService.setBlockProposal(blockProposal);
 	};
 
 	const handleReceiveToeplitzGroupSignature = (toeplitzGroupSignature: string[]) => {
 		votingService.setIsVoteEnded(false);
 		const oneTimePadMapping = oneTimePadService.getOneTimePadMapping();
-		const dataProposal = dataService.getDataProposal();
+		const blockProposal = blockService.getBlockProposal();
+		const dataProposal = blockProposal?.data;
+		if (!dataProposal) {
+			throw Error('No data in block proposal');
+		}
 		const hashedSignature = toeplitzService.calculateHashedSignature(oneTimePadMapping, dataProposal);
 		const isVerified = toeplitzService.verifyToeplitzGroupSignature(toeplitzGroupSignature, hashedSignature);
 	
@@ -109,14 +119,24 @@ export const buildApiService = (services: Services) => {
 		await votingService.sendAddVoteAllPeers();
 		if (votingService.getVotes() >= 12) {
 			setVoteIsEnded();
+			handleAddBlockToChain();
 			onSuccess();
 			clearEverything();
-			await votingService.sendVotingFinishedToAllPeers();
+			await blockService.sendAddBlockToChainToAllPeers();
 		} else {
 			if (peerQueue.length !== 0) {
 				votingService.initializeVote(peerQueue, hashedSignature);
 			}
 		}
+	};
+
+	const handleAddBlockToChain = () => {
+		const blockProposal = blockService.getBlockProposal();
+		if (!blockProposal) {
+			throw Error('No block proposal');
+		} 
+		blockchainService.addBlock(blockProposal);
+		blockchainService.saveBlock(blockProposal);
 	};
 
 	const isVoteEnded = () => votingService.getIsVoteEnded();
@@ -146,8 +166,9 @@ export const buildApiService = (services: Services) => {
 	return {
 		handleReceiveTransaction,
 		handleReceiveToeplitzGroupSignature,
-		handleReceiveDataProposal,
+		handleReceiveBlockProposal,
 		handleVerifyAndVote,
+		handleAddBlockToChain,
 		isVoteEnded,
 		addVote,
 		setVoteIsEnded,

@@ -6,9 +6,12 @@ import { buildTransactionService } from './transaction.service';
 import { buildVotingService } from './voting.service';
 import { buildQKDService } from './qkd.service';
 import { buildQRNGService } from './qrng.service';
+import { buildBlockService } from './block.service';
+import { buildBlockchainService } from './blockchain.service';
 
 export const buildServices = (): Services => {
-	const dataService = buildDataService(nodeService);
+	const blockService = buildBlockService(nodeService);
+	const blockchainService = buildBlockchainService();
 	const oneTimePadService = buildOneTimePadService(nodeService);
 	const toeplitzService = buildToeplitzService(nodeService);
 	const transactionService = buildTransactionService(nodeService);
@@ -18,7 +21,8 @@ export const buildServices = (): Services => {
   
 	return {
 		nodeService,
-		dataService,
+		blockService,
+		blockchainService,
 		oneTimePadService,
 		toeplitzService,
 		transactionService,
@@ -30,7 +34,8 @@ export const buildServices = (): Services => {
 
 export interface Services {
   nodeService: typeof nodeService,
-  dataService: ReturnType<typeof buildDataService>,
+  blockService: ReturnType<typeof buildBlockService>,
+  blockchainService: ReturnType<typeof buildBlockchainService>,
   oneTimePadService: ReturnType<typeof buildOneTimePadService>,
   toeplitzService: ReturnType<typeof buildToeplitzService>,
   transactionService: ReturnType<typeof buildTransactionService>,

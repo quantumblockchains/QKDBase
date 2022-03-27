@@ -72,7 +72,7 @@ export const sendBlockProposal = async (
 	blockProposal: Block,
 ) => {
 	const { address, port } = nodeAddress;
-	const url = `http://${address}:${port}/receive-block-proposal`;
+	const url = `${address}:${port}/receive-block-proposal`;
 	const response = await got.post(url, {
 		json: {
 			blockProposal,
@@ -222,8 +222,22 @@ export const getQRNGRandomArray = async ({
 	const apiKey = process.env.QRNG_GET_RANDOM_ARRAY_API_KEY;
 	if (url) {
 		const urlWithParams = `${url}/${apiKey}/block/short?size=${length}&min=${min}&max=${max}`;
-		const { body } = await got.get(urlWithParams, { rejectUnauthorized: false });
+		const { body } = await got.get(
+			urlWithParams, 
+			{
+				https: {
+					rejectUnauthorized: false
+				}
+			}
+		);
 		const parsedBody = JSON.parse(body) as QRNGGetRandomArrayResponse;
 		return parsedBody.data.result;
 	}
+};
+
+export const sendAddBlockToChain = async (nodeAddress: NodeAddress) => {
+	const { address, port } = nodeAddress;
+	const url = `${address}:${port}/add-block-to-chain`;
+	const response = await got.post(url);
+	return response;
 };

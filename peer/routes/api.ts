@@ -1,7 +1,7 @@
 import express from 'express';
 import { log } from '../../shared/utils/log';
 import { Services } from '../services/services';
-import { DataProposalRequest } from '../types';
+import { Block } from '../types';
 import { NodeAddress } from '../../shared/types';
 import { buildApiService } from '../services/api.service';
 
@@ -13,9 +13,10 @@ export const buildApiRouter = (services: Services, onSuccess: () => void, onErro
 
 	const {
 		handleReceiveTransaction,
-		handleReceiveDataProposal,
+		handleReceiveBlockProposal,
 		handleReceiveToeplitzGroupSignature,
 		handleVerifyAndVote,
+		handleAddBlockToChain,
 		isVoteEnded,
 		addVote,
 		setVoteIsEnded,
@@ -36,25 +37,25 @@ export const buildApiRouter = (services: Services, onSuccess: () => void, onErro
 		} catch (error) {
 			console.error(error);
 		}
-		res.send('Data proposal sent to all peers');
+		res.send('Voting started');
 	});
 
-	router.post('/receive-data-proposal', jsonParser, async (req, res) => {
-		log('Received data proposal');
+	router.post('/receive-block-proposal', jsonParser, async (req, res) => {
+		log('Received block proposal');
 		try {
-			const { dataProposal }: DataProposalRequest = req.body;
-			handleReceiveDataProposal(dataProposal);
+			const { blockProposal }: { blockProposal: Block } = req.body;
+			handleReceiveBlockProposal(blockProposal);
 		} catch (error) {
 			console.error(error);
 			onError();
 		}
-		res.send('Received data proposal');
+		res.send('Received block proposal');
 	});
 
 	router.post('/receive-toeplitz-group-signature', jsonParser, async (req, res) => {
 		log('Received Toeplitz Group Signature');
 		try {
-			const { toeplitzGroupSignature }: DataProposalRequest = req.body;
+			const { toeplitzGroupSignature }: { toeplitzGroupSignature: string[] } = req.body;
 			handleReceiveToeplitzGroupSignature(toeplitzGroupSignature);
 		} catch (error) {
 			console.error(error);
@@ -87,6 +88,23 @@ export const buildApiRouter = (services: Services, onSuccess: () => void, onErro
 		}
 		addVote();
 		res.send('Added vote');
+	});
+
+	router.post('/add-block-to-chain', (_req, res) => {
+		log('Received add block to chain request');
+		if (isVoteEnded()) {
+			res.send('Vote ended');
+			return;
+		}
+		try {
+			setVoteIsEnded();
+			handleAddBlockToChain();
+			onSuccess();
+			clearEverything();
+		} catch (error) {
+			console.error(error);
+		}
+		res.send('Added block to chain');
 	});
   
 	router.post('/voting-finished', (_req, res) => {

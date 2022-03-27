@@ -3,7 +3,7 @@ import path from 'path';
 import { Block } from '../types';
 import { computeBlockHash } from '../utils/computeBlockHash';
 
-export const blockchainService = (() => {
+export const buildBlockchainService = () => {
 	const loadBlocksFromFiles = () => {
 		const dirname = path.join(__dirname, '../blocks/');
 		fs.readdir(dirname, (error, filenames) => {
@@ -54,15 +54,15 @@ export const blockchainService = (() => {
 
 	const saveBlock = (block: Block) => {
 		try {
-			const filename = path.join(__dirname, `../blocks/block_${block.index}.json`);
-			fs.writeFileSync(filename, JSON.stringify(block));
+			const pathname = path.join(__dirname, `../blocks/block_${block.index}.json`);
+			fs.writeFileSync(pathname, JSON.stringify(block));
 		} catch (err) {
 			console.error(err);
 		}
 	};
 
 	return { getLastBlock, addBlock, saveBlock };
-})();
+};
 
 const createGenesisBlock = (addBlock: (block: Block) => void) => {
 	const index = 0;

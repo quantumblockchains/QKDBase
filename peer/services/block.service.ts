@@ -1,10 +1,10 @@
 import { Block } from '../types';
 import { computeBlockHash } from '../utils/computeBlockHash';
-import { sendBlockProposal } from './http.service';
+import { sendAddBlockToChain, sendBlockProposal } from './http.service';
 import { log } from '../../shared/utils/log';
 import { NodeService } from './node.service';
 
-export const blockService = (nodeService: NodeService) => {
+export const buildBlockService = (nodeService: NodeService) => {
 	let blockProposal: Block | undefined = undefined;
 
 	const { getContiguousNodesAddresses } = nodeService;
@@ -44,12 +44,21 @@ export const blockService = (nodeService: NodeService) => {
 		blockProposal = undefined;
 	};
 
+	const sendAddBlockToChainToAllPeers = async () => {
+		log('Sending request to add block to chain');
+		const contiguousNodesAddresses = getContiguousNodesAddresses();
+		for (const nodeAddress of contiguousNodesAddresses) {
+			await sendAddBlockToChain(nodeAddress);
+		}
+	};
+
 	return {
 		createBlockProposal,
 		sendBlockProposalToAllPeers,
 		setBlockProposal,
 		getBlockProposal,
 		clearBlockProposal,
+		sendAddBlockToChainToAllPeers,
 	};
 };
 
