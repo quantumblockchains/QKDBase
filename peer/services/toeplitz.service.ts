@@ -159,7 +159,7 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 	};
 
 	const sendToeplitzGroupSignatureToAllPeers = async (toeplitzGroupSignature: string[]) => {
-		log('Sending Toeplitz Group Signature to peers');
+		log('Sending Toeplitz Group Signature to all peers');
 		const contiguousNodesAddresses = getContiguousNodesAddresses();
 		for (const nodeAddress of contiguousNodesAddresses) {
 			if (!toeplitzGroupSignature) {

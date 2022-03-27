@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { QRNGGetRandomArrayResponse, NodeAddress, QKDGetKeyResponse } from '../../shared/types';
 import { Block } from '../types';
+import { log } from '../../shared/utils/log';
 dotenv.config({ path: __dirname + '/../.env' });
 
 export const checkIfToeplitzMatrixIsEstablished = async (
@@ -11,6 +12,7 @@ export const checkIfToeplitzMatrixIsEstablished = async (
 	myNodeAddress: string
 ) => {
 	const { address } = nodeAddress;
+	log(`Checking if Toeplitz matrix is established with ${address}`);
 	const url = `${address}/check-toeplitz`;
 	const response = await got.post(url, {
 		json: {
@@ -27,6 +29,7 @@ export const sendTopelitzMatrix = async (
 	myNodeAddress: string
 ) => {
 	const { address } = nodeAddress;
+	log(`Sending Toeplitz matrix to ${address}`);
 	const url = `${address}/receive-toeplitz`;
 	const response = await got.post(url, {
 		json: {
@@ -43,6 +46,7 @@ export const sendOneTimePad = async (
 	myNodeAddress: string
 ) => {
 	const { address } = nodeAddress;
+	log(`Sending one time pad to ${address}`);
 	const url = `${address}/receive-one-time-pad`;
 	const response = await got.post(url, {
 		json: {
@@ -58,6 +62,7 @@ export const sendDataProposal = async (
 	dataProposal: string,
 ) => {
 	const { address } = nodeAddress;
+	log(`Sending data proposal to ${address}`);
 	const url = `${address}/receive-data-proposal`;
 	const response = await got.post(url, {
 		json: {
@@ -72,6 +77,7 @@ export const sendBlockProposal = async (
 	blockProposal: Block,
 ) => {
 	const { address } = nodeAddress;
+	log(`Sending block proposal to ${address}`);
 	const url = `${address}/receive-block-proposal`;
 	const response = await got.post(url, {
 		json: {
@@ -86,6 +92,7 @@ export const sendToeplitzGroupSignature = async (
 	toeplitzGroupSignature: string[]
 ) => {
 	const { address } = nodeAddress;
+	log(`Sending Toeplitz Group Signature to ${address}`);
 	const url = `${address}/receive-toeplitz-group-signature`;
 	const response = await got.post(url, {
 		json: {
@@ -101,6 +108,7 @@ export const checkIfOneTimePadIsEstablished = async (
 ) => {
 	const { address } = nodeAddress;
 	const url = `${address}/check-one-time-pad`;
+	log(`Checking if one time pad is established with ${address}`);
 	const response = await got.post(url, {
 		json: {
 			nodeAddress: myNodeAddress,
@@ -116,6 +124,7 @@ export const sendVerifyAndVote = async (
 	hashedSignature: string,
 ) => {
 	const { address } = nodeAddress;
+	log(`Sending verify and vote request to ${address}`);
 	const url = `${address}/verify-and-vote`;
 	const response = await got.post(url, {
 		json: {
@@ -128,6 +137,7 @@ export const sendVerifyAndVote = async (
 
 export const sendAddVote = async (nodeAddress: NodeAddress) => {
 	const { address } = nodeAddress;
+	log(`Sending add vote request to ${address}`);
 	const url = `${address}/add-vote`;
 	const response = await got.post(url);
 	return response;
@@ -135,6 +145,7 @@ export const sendAddVote = async (nodeAddress: NodeAddress) => {
 
 export const sendVotingFinished = async (nodeAddress: NodeAddress) => {
 	const { address } = nodeAddress;
+	log(`Sending voting finished request to ${address}`);
 	const url = `${address}/voting-finished`;
 	const response = await got.post(url);
 	return response;
@@ -154,6 +165,7 @@ export const getNodesAddressesFromBootstrap = async () => {
 };
 
 export const getQKDKey = async (keyLength: number) => {
+	log(`Sending get QKD key request`);
 	const url = process.env.QKD_GET_KEY_URL;
 	if (url) {
 		const response = await got.post(url, {
@@ -178,6 +190,7 @@ export const getQKDKey = async (keyLength: number) => {
 
 export const sendQKDKeyId = async (nodeAddress: NodeAddress, keyId: string) => {
 	const { address } = nodeAddress;
+	log(`Sending QKD key id to ${address}`);
 	const url = `${address}/receive-qkd-key-id`;
 	await got.post(url, {
 		json: {
@@ -187,6 +200,7 @@ export const sendQKDKeyId = async (nodeAddress: NodeAddress, keyId: string) => {
 };
 
 export const getQKDKeyById = async (keyId: string) => {
+	log(`Sending get QKD key by id request`);
 	const url = process.env.QKD_GET_KEY_BY_ID_URL;
 	if (url) {
 		const { body } = await got.post<QKDGetKeyResponse>(url, {
@@ -216,6 +230,7 @@ export const getQRNGRandomArray = async ({
 	min,
 	max
 }: { length: number, min: number, max: number }) => {
+	log(`Sending get QRNG random array request`);
 	const url = process.env.QRNG_GET_RANDOM_ARRAY_URL;
 	const apiKey = process.env.QRNG_GET_RANDOM_ARRAY_API_KEY;
 	if (url) {
@@ -235,6 +250,7 @@ export const getQRNGRandomArray = async ({
 
 export const sendAddBlockToChain = async (nodeAddress: NodeAddress) => {
 	const { address } = nodeAddress;
+	log(`Sending add block to chain request to ${address}`);
 	const url = `${address}/add-block-to-chain`;
 	const response = await got.post(url);
 	return response;

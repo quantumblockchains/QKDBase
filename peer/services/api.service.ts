@@ -54,7 +54,7 @@ export const buildApiService = (services: Services) => {
 	};
   
 	const startVoting = async (calculatedHashedSignature: string) => {
-		log('Starting voting, create peer queue');
+		log('Starting voting, creating peer queue');
 		let randomPeerArray = nodeService.getAllNodesAddresses();
 		if (shouldUseQRNG) {
 			randomPeerArray = await qrngService.generateRandomArrayOfNodes();

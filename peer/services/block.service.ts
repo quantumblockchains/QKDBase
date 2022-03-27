@@ -45,7 +45,7 @@ export const buildBlockService = (nodeService: NodeService) => {
 	};
 
 	const sendAddBlockToChainToAllPeers = async () => {
-		log('Sending request to add block to chain');
+		log('Sending request to add block to chain to all peers');
 		const contiguousNodesAddresses = getContiguousNodesAddresses();
 		for (const nodeAddress of contiguousNodesAddresses) {
 			await sendAddBlockToChain(nodeAddress);
