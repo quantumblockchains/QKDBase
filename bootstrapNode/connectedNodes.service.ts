@@ -10,7 +10,7 @@ export const connectedNodesService = () => {
 
 	const sendAddNodeAddressToAll = async (nodeAddress: NodeAddress) => {
 		for (const node of connectedNodes) {
-			const url = `${node.address}:${node.port}/add-node`;
+			const url = `${node.address}/add-node`;
 			await got.post(url, {
 				json: {
 					nodeAddress

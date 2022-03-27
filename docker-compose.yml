@@ -8,7 +8,7 @@ services:
     ports:
       - '3015:3015'
     environment:
-      - FIRST_PEER_HASH=http://peer_1
+      - FIRST_PEER_HASH=http://peer_1:3016
     container_name: client
   bootstrap_node:
     image: bootstrap_node
@@ -29,7 +29,7 @@ services:
     ports:
       - '3001:3016'
     environment:
-      - NODE_ADDRESS=http://peer_1
+      - NODE_ADDRESS=http://peer_1:3016
       - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
       - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
@@ -47,7 +47,7 @@ services:
       - peer_1
     restart: on-failure 
     environment:
-      - NODE_ADDRESS=http://peer_2
+      - NODE_ADDRESS=http://peer_2:3016
       - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
       - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
@@ -66,7 +66,7 @@ services:
       - peer_2
     restart: on-failure 
     environment:
-      - NODE_ADDRESS=http://peer_3
+      - NODE_ADDRESS=http://peer_3:3016
       - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
       - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
@@ -86,7 +86,7 @@ services:
       - peer_3
     restart: on-failure 
     environment:
-      - NODE_ADDRESS=http://peer_4
+      - NODE_ADDRESS=http://peer_4:3016
       - PORT=3016
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
       - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io

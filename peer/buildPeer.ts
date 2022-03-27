@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { buildApiRouter } from './routes/api';
 import { buildServices } from './services/services';
 import { log } from '../shared/utils/log';
-dotenv.config();
+dotenv.config({ path: __dirname + '/.env' });
 
 export const buildPeer = async (onSuccess: () => void, onError: () => void) => {
 	try {

@@ -3,7 +3,6 @@ import { nodeService } from '../../services/node.service';
 import { server } from '../mock/http.service.mock';
 jest.spyOn(nodeService, 'getContiguousNodesAddresses').mockImplementation(() => [{
 	address: 'http://test-address',
-	port: '1',
 }]);
 
 

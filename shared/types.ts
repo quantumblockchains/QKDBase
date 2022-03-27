@@ -1,6 +1,5 @@
 export interface NodeAddress {
   address: string;
-  port: string;
 }
 
 export interface QKDGetKeyResponse {
@@ -12,9 +11,9 @@ export interface QKDGetKeyResponse {
 
 export interface QRNGGetRandomArrayResponse {
   data: {
-      result: number[];
-      QuantisRead: number;
-      ExecuteTime: string;
+    result: number[];
+    QuantisRead: number;
+    ExecuteTime: string;
   },
   error: string;
   message: string;

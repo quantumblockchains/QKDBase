@@ -12,11 +12,11 @@ const { addNode, getConnectedNodes, sendAddNodeAddressToAll } = connectedNodesSe
 
 app.post('/connected-nodes', jsonParser, async (req, res) => {
 	const nodeAddress = req.body as NodeAddress;
-	const { address, port } = nodeAddress;
+	const { address } = nodeAddress;
   
 	log(`Received request to fetch connected nodes from: ${address}`);
 
-	if (!(address && port)) {
+	if (!(address)) {
 		res.status(400).send('Missing node addresses');
 		return;
 	}

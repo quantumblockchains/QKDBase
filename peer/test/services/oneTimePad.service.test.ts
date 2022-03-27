@@ -49,7 +49,6 @@ describe('One-time pad service', () => {
 			jest.spyOn(nodeService, 'getContiguousNodesAddresses').mockImplementationOnce(() => [
 				{
 					address: isCorrect ? 'http://test-address' : 'http://wrong-address',
-					port: '1',
 				},
 			]);
 		};
@@ -73,7 +72,6 @@ describe('One-time pad service', () => {
 			}]);
 			expect(sendOneTimePad).toBeCalledWith({
 				address: 'http://wrong-address',
-				port: '1',
 			}, [1,2,3,4,5], 'http://localhost');
 		});
     

@@ -3,7 +3,6 @@ import { buildVotingService } from '../../services/voting.service';
 import { server } from '../mock/http.service.mock';
 jest.spyOn(nodeService, 'getAllNodesAddresses').mockImplementation(() => [{
 	address: 'http://test-address',
-	port: '1',
 }]);
 
 describe('Voting service', () => {
@@ -103,11 +102,9 @@ describe('Voting service', () => {
 			const peerQueue = [
 				{
 					address: 'http://test-address',
-					port: '1',
 				},
 				{
 					address: 'http://test-address1',
-					port: '1',
 				}
 			];
 			const sendDataProposalWithGroupSignature = votingService.initializeVote(peerQueue, 'testHashedSignature');

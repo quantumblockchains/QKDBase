@@ -9,7 +9,6 @@ const mockContiguousNodes = (hasMatrix: boolean) => {
 	jest.spyOn(nodeService, 'getContiguousNodesAddresses').mockImplementation(() => [
 		{
 			address: hasMatrix ? 'http://testaddressFirst' : 'http://testaddressSecond',
-			port: '1',
 		},
 	]);
 };

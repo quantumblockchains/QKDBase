@@ -2,12 +2,11 @@ import dotenv from 'dotenv';
 import { getNodesAddressesFromBootstrap } from './http.service';
 import { compareNodeAddresses } from '../utils/compareNodeAddresses';
 import { NodeAddress } from '../../shared/types';
-dotenv.config();
+dotenv.config({ path: __dirname + '/../.env' });
 
 export const nodeService = (() => {
 	let nodes = [{
 		address: process.env.NODE_ADDRESS,
-		port: process.env.PORT,
 	}] as NodeAddress[];
 
 	const getNodesFromBootstrap = async () => {
@@ -30,14 +29,12 @@ export const nodeService = (() => {
 
 	const getMyNodeAddresses = () => {
 		const address = process.env.NODE_ADDRESS;
-		const port = process.env.PORT;
     
-		if (!(address && port)) {
+		if (!(address)) {
 			throw Error('Missing my node configuration');
 		}
 		return {
 			address,
-			port,
 		};
 	};
 
@@ -46,7 +43,6 @@ export const nodeService = (() => {
 	const clearNodesAddresses = () => {
 		nodes = [{
 			address: process.env.NODE_ADDRESS,
-			port: process.env.PORT,
 		}] as NodeAddress[];
 	};
 

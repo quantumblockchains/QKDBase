@@ -4,14 +4,14 @@ import fs from 'fs';
 import path from 'path';
 import { QRNGGetRandomArrayResponse, NodeAddress, QKDGetKeyResponse } from '../../shared/types';
 import { Block } from '../types';
-dotenv.config();
+dotenv.config({ path: __dirname + '/../.env' });
 
 export const checkIfToeplitzMatrixIsEstablished = async (
 	nodeAddress: NodeAddress,
 	myNodeAddress: string
 ) => {
-	const { address, port } = nodeAddress;
-	const url = `${address}:${port}/check-toeplitz`;
+	const { address } = nodeAddress;
+	const url = `${address}/check-toeplitz`;
 	const response = await got.post(url, {
 		json: {
 			nodeAddress: myNodeAddress,
@@ -26,8 +26,8 @@ export const sendTopelitzMatrix = async (
 	toeplitzVector: number[],
 	myNodeAddress: string
 ) => {
-	const { address, port } = nodeAddress;
-	const url = `${address}:${port}/receive-toeplitz`;
+	const { address } = nodeAddress;
+	const url = `${address}/receive-toeplitz`;
 	const response = await got.post(url, {
 		json: {
 			toeplitzVector,
@@ -42,8 +42,8 @@ export const sendOneTimePad = async (
 	oneTimePad: number[],
 	myNodeAddress: string
 ) => {
-	const { address, port } = nodeAddress;
-	const url = `${address}:${port}/receive-one-time-pad`;
+	const { address } = nodeAddress;
+	const url = `${address}/receive-one-time-pad`;
 	const response = await got.post(url, {
 		json: {
 			oneTimePad,
@@ -57,8 +57,8 @@ export const sendDataProposal = async (
 	nodeAddress: NodeAddress,
 	dataProposal: string,
 ) => {
-	const { address, port } = nodeAddress;
-	const url = `${address}:${port}/receive-data-proposal`;
+	const { address } = nodeAddress;
+	const url = `${address}/receive-data-proposal`;
 	const response = await got.post(url, {
 		json: {
 			dataProposal,
@@ -71,8 +71,8 @@ export const sendBlockProposal = async (
 	nodeAddress: NodeAddress,
 	blockProposal: Block,
 ) => {
-	const { address, port } = nodeAddress;
-	const url = `${address}:${port}/receive-block-proposal`;
+	const { address } = nodeAddress;
+	const url = `${address}/receive-block-proposal`;
 	const response = await got.post(url, {
 		json: {
 			blockProposal,
@@ -85,8 +85,8 @@ export const sendToeplitzGroupSignature = async (
 	nodeAddress: NodeAddress,
 	toeplitzGroupSignature: string[]
 ) => {
-	const { address, port} = nodeAddress;
-	const url = `${address}:${port}/receive-toeplitz-group-signature`;
+	const { address } = nodeAddress;
+	const url = `${address}/receive-toeplitz-group-signature`;
 	const response = await got.post(url, {
 		json: {
 			toeplitzGroupSignature,
@@ -99,8 +99,8 @@ export const checkIfOneTimePadIsEstablished = async (
 	nodeAddress: NodeAddress,
 	myNodeAddress: string
 ) => {
-	const { address, port } = nodeAddress;
-	const url = `${address}:${port}/check-one-time-pad`;
+	const { address } = nodeAddress;
+	const url = `${address}/check-one-time-pad`;
 	const response = await got.post(url, {
 		json: {
 			nodeAddress: myNodeAddress,
@@ -115,8 +115,8 @@ export const sendVerifyAndVote = async (
 	peerQueue: NodeAddress[],
 	hashedSignature: string,
 ) => {
-	const { address, port} = nodeAddress;
-	const url = `${address}:${port}/verify-and-vote`;
+	const { address } = nodeAddress;
+	const url = `${address}/verify-and-vote`;
 	const response = await got.post(url, {
 		json: {
 			peerQueue,
@@ -127,28 +127,26 @@ export const sendVerifyAndVote = async (
 };
 
 export const sendAddVote = async (nodeAddress: NodeAddress) => {
-	const { address, port} = nodeAddress;
-	const url = `${address}:${port}/add-vote`;
+	const { address } = nodeAddress;
+	const url = `${address}/add-vote`;
 	const response = await got.post(url);
 	return response;
 };
 
 export const sendVotingFinished = async (nodeAddress: NodeAddress) => {
-	const { address, port} = nodeAddress;
-	const url = `${address}:${port}/voting-finished`;
+	const { address } = nodeAddress;
+	const url = `${address}/voting-finished`;
 	const response = await got.post(url);
 	return response;
 };
 
 export const getNodesAddressesFromBootstrap = async () => {
 	const address = process.env.NODE_ADDRESS;
-	const port = process.env.PORT;
 	const bootstrapNodeAddress = process.env.BOOTSTRAP_NODE_ADDRESS;
 	const url = `${bootstrapNodeAddress}/connected-nodes`;
 	const response = await got.post(url, {
 		json: { 
 			address,
-			port,
 		},
 		responseType: 'json'
 	});
@@ -179,8 +177,8 @@ export const getQKDKey = async (keyLength: number) => {
 };
 
 export const sendQKDKeyId = async (nodeAddress: NodeAddress, keyId: string) => {
-	const { address, port } = nodeAddress;
-	const url = `${address}:${port}/receive-qkd-key-id`;
+	const { address } = nodeAddress;
+	const url = `${address}/receive-qkd-key-id`;
 	await got.post(url, {
 		json: {
 			keyId,
@@ -236,8 +234,8 @@ export const getQRNGRandomArray = async ({
 };
 
 export const sendAddBlockToChain = async (nodeAddress: NodeAddress) => {
-	const { address, port } = nodeAddress;
-	const url = `${address}:${port}/add-block-to-chain`;
+	const { address } = nodeAddress;
+	const url = `${address}/add-block-to-chain`;
 	const response = await got.post(url);
 	return response;
 };

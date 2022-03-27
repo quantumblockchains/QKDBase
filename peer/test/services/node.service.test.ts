@@ -7,10 +7,8 @@ describe('Node service', () => {
 	describe('getMyNodeAddresses', () => {
 		test('Return my node address', () => {
 			const address = process.env.NODE_ADDRESS;
-			const port = process.env.PORT;
 			const myNodeAddress = {
 				address,
-				port,
 			};
 			const myNodeAddressFromService = nodeService.getMyNodeAddresses();
 			expect(myNodeAddressFromService).toEqual(myNodeAddress);
@@ -21,7 +19,6 @@ describe('Node service', () => {
 		test('Return my contiguous addresses', () => {
 			const nodeAddress = {
 				address: 'test-address',
-				port: '1',
 			};
 			nodeService.addNodeAddress(nodeAddress);
 			const contiguousNodesAddresses = nodeService.getContiguousNodesAddresses();
@@ -32,14 +29,11 @@ describe('Node service', () => {
 	describe('getAllNodesAddresses', () => {
 		test('Return all nodes addresses', () => {
 			const address = process.env.NODE_ADDRESS;
-			const port = process.env.PORT;
 			const myNodeAddress = {
 				address,
-				port,
 			};
 			const nodeAddress = {
 				address: 'test-address',
-				port: '1',
 			};
 			nodeService.addNodeAddress(nodeAddress);
 			const allNodesAddresses = nodeService.getAllNodesAddresses();
@@ -51,7 +45,6 @@ describe('Node service', () => {
 		test('Add node if unique address', () => {
 			const nodeAddress = {
 				address: 'test-address',
-				port: '1',
 			};
 			nodeService.addNodeAddress(nodeAddress);
 			const contiguousNodesAddresses = nodeService.getContiguousNodesAddresses();
@@ -61,7 +54,6 @@ describe('Node service', () => {
 		test("Don't add node if not unique address", () => {
 			const nodeAddress = {
 				address: 'test-address',
-				port: '1',
 			};
 			nodeService.addNodeAddress(nodeAddress);
 			nodeService.addNodeAddress(nodeAddress);
@@ -79,11 +71,9 @@ describe('Node service', () => {
 			const nodesFromBootstrap = [
 				{
 					address: 'testFirstAddress',
-					port: '1',
 				},
 				{
 					address: 'testSecondAddress',
-					port: '1',
 				}
 			];
 			const contiguousNodesAddresses = nodeService.getContiguousNodesAddresses();
