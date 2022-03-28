@@ -17,7 +17,8 @@ export const buildApiService = (services: Services) => {
 		toeplitzService,
 		transactionService, 
 		votingService,
-		qkdService,
+		oneTimePadByQKD,
+		toeplitzByQKD,
 		qrngService,
 	} = services;
   
@@ -33,12 +34,13 @@ export const buildApiService = (services: Services) => {
   
 	const establishNecessaryData = async (transaction: string) => {
 		const transactionAsBinaryLength = convertStringToBinary(transaction).length;
-		await blockService.sendBlockProposalToAllPeers();
-		await toeplitzService.establishToeplitzMatrix(transactionAsBinaryLength);
+		await blockService.sendBlockProposalToAllPeers();		
 		if (shouldUseQKD) {
-			await qkdService.establishOneTimePadWithQKD(transaction.length);
+			await oneTimePadByQKD.establishOneTimePadWithQKD(transaction.length);
+			await toeplitzByQKD.establishToeplitzMatrixWithQKD(transaction.length);
 		} else {
 			await oneTimePadService.establishOneTimePad(transactionAsBinaryLength);
+			await toeplitzService.establishToeplitzMatrix(transactionAsBinaryLength);
 		}
 	};
 
@@ -160,8 +162,10 @@ export const buildApiService = (services: Services) => {
 		oneTimePadService.addOneTimePad(oneTimePad, nodeAddress);
 
 	const fetchAndStoreQKDKey = async (keyId: string, nodeAddress: string) =>
-		await qkdService.fetchAndStoreQKDKey(keyId, nodeAddress);
+		await oneTimePadByQKD.fetchAndStoreQKDKey(keyId, nodeAddress);
 
+	const fetchAndStoreToeplitzMatrix = async (keyId: string, nodeAddress: string) =>
+		await toeplitzByQKD.fetchAndStoreToeplitzMatrix(keyId, nodeAddress);
 
 	return {
 		handleReceiveTransaction,
@@ -178,6 +182,7 @@ export const buildApiService = (services: Services) => {
 		addToeplitzMatrix,
 		addOneTimePad,
 		fetchAndStoreQKDKey,
+		fetchAndStoreToeplitzMatrix,
 		clearEverything,
 	};
 };

@@ -89,7 +89,7 @@ export const matrixMathService = () => {
 		compareToeplitzMatrixes,
 		generateToeplitzMatrix,
 		convertStringToBinary,
+		calculateModuloFromVectorElements,
 		toeplitzMatrixToVector,
-		calculateModuloFromVectorElements
 	};
 };

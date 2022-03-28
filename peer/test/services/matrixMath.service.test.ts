@@ -6,8 +6,8 @@ const {
 	compareToeplitzMatrixes,
 	generateToeplitzMatrix,
 	convertStringToBinary,
-	toeplitzMatrixToVector,
-	calculateModuloFromVectorElements
+	calculateModuloFromVectorElements,
+	toeplitzMatrixToVector
 } = matrixMathService();
 
 describe('Checks if object is Toeplitz matrix',() => {

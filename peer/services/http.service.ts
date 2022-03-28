@@ -199,6 +199,16 @@ export const sendQKDKeyId = async (nodeAddress: NodeAddress, keyId: string) => {
 	});
 };
 
+export const sendToeplitzVectorByQKD = async (nodeAddress: NodeAddress, keyId: string) => {
+	const { address } = nodeAddress;
+	const url = `${address}/receive-toeplitz-vector-by-qkd`;
+	await got.post(url, {
+		json: {
+			keyId,
+		},
+	});
+};
+
 export const getQKDKeyById = async (keyId: string) => {
 	log(`Sending get QKD key by id request`);
 	const url = process.env.QKD_GET_KEY_BY_ID_URL;

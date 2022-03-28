@@ -1,10 +1,10 @@
 import { log } from '../../shared/utils/log';
-import { getQKDKey, getQKDKeyById, sendQKDKeyId } from './http.service';
+import { getQKDKey, getQKDKeyById, sendQKDKeyId} from './http.service';
 import { matrixMathService } from './matrixMath.service';
 import { NodeService } from './node.service';
 import { OneTimePadService } from './oneTimePad.service';
 
-export const buildQKDService = (nodeService: NodeService, oneTimePadService: OneTimePadService) => {
+export const buildoneTimePadByQKD = (nodeService: NodeService, oneTimePadService: OneTimePadService) => {
 	const { getContiguousNodesAddresses } = nodeService;
 	const { convertStringToBinary } = matrixMathService();
 

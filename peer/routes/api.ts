@@ -26,6 +26,7 @@ export const buildApiRouter = (services: Services, onSuccess: () => void, onErro
 		addToeplitzMatrix,
 		addOneTimePad,
 		fetchAndStoreQKDKey,
+		fetchAndStoreToeplitzMatrix,
 		clearEverything
 	} = apiService;
   
@@ -174,6 +175,18 @@ export const buildApiRouter = (services: Services, onSuccess: () => void, onErro
 			console.error(error);
 		}
 		res.send('One-time pad added');
+	});
+
+	router.post('/receive-toeplitz-vector-by-qkd', jsonParser, async (req, res) => {
+		log('Received toeplitz vector id');
+		try {
+			const { keyId, nodeAddress } = req.body;
+			log('Fetching toeplitz vector and storing as toeplitz matrix');
+			await fetchAndStoreToeplitzMatrix(keyId, nodeAddress);
+		} catch (error) {
+			console.error(error);
+		}
+		res.send('Toeplitz matrix added');
 	});
 
 	return router;

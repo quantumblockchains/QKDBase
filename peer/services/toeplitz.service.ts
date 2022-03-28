@@ -28,8 +28,8 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		compareToeplitzMatrixes,
 		generateToeplitzMatrix,
 		convertStringToBinary,
-		toeplitzMatrixToVector,
 		calculateModuloFromVectorElements,
+		toeplitzMatrixToVector,
 	} = matrixMathService();
 
 	const establishToeplitzMatrix = async (transactionLength: number) => {
