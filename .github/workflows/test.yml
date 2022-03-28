@@ -8,7 +8,7 @@ jobs:
         working-directory: ./
   
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Install
       run: yarn install
     - name: Linter

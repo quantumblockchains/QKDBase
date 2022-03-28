@@ -19,19 +19,19 @@ The Repository consists of two parts. The first one is implementation of the con
   yarn
 ```
 
-#### To start peers and client in docker container (in main directory):
+#### To start peers and client in docker container (in scripts directory):
 
 ```sh
   python3 start_docker.py
 ```
 
-#### To make client send transaction to peers (in main directory):
+#### To make client send transaction to peers (in scripts directory):
 
 ```sh
   python3 send_transaction.py
 ```
 
-#### To stop client and peers (in main directory):
+#### To stop client and peers (in scripts directory):
 
 ```sh
   python3 stop_docker.py
