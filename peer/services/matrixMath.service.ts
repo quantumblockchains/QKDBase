@@ -74,7 +74,7 @@ export const matrixMathService = () => {
 		return binaryString.split('').map((char) => Number(char));
 	};
 
-	const calculateModuloFromMatrixElements = (vector: Matrix) => vector.map(element => element % 2);
+	const calculateModuloFromVectorElements = (vector: Matrix) => vector.map(element => element % 2);
 
 	const toeplitzMatrixToVector = (toeplitzMatrix: number[][]) => {
 		const vector = toeplitzMatrix[0].map((x) => x);
@@ -89,7 +89,7 @@ export const matrixMathService = () => {
 		compareToeplitzMatrixes,
 		generateToeplitzMatrix,
 		convertStringToBinary,
-		calculateModuloFromMatrixElements,
-		toeplitzMatrixToVector
+		toeplitzMatrixToVector,
+		calculateModuloFromVectorElements
 	};
 };

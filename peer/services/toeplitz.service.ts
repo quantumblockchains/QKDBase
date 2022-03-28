@@ -28,8 +28,8 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		compareToeplitzMatrixes,
 		generateToeplitzMatrix,
 		convertStringToBinary,
-		calculateModuloFromMatrixElements,
 		toeplitzMatrixToVector,
+		calculateModuloFromVectorElements,
 	} = matrixMathService();
 
 	const establishToeplitzMatrix = async (transactionLength: number) => {
@@ -84,9 +84,9 @@ export const buildToeplitzService = (nodeService: NodeService) => {
 		const transactionDataAsBinary = convertStringToBinary(data);  
 		const toeplitzParsedMatrix = matrix(toeplitzMatrix);
 		const outputVector = multiply(toeplitzParsedMatrix, transactionDataAsBinary);
-		const multipliedMatrixesModulo = calculateModuloFromMatrixElements(outputVector);
+		const multipliedVectorModulo = calculateModuloFromVectorElements(outputVector);
 		const oneTimePadKeyAsMatrix = matrix(oneTimePad);
-		const xorResult = xor(multipliedMatrixesModulo, oneTimePadKeyAsMatrix) as Matrix;
+		const xorResult = xor(multipliedVectorModulo, oneTimePadKeyAsMatrix) as Matrix;
 		const xorArray = xorResult.toArray();
 		xorArray.forEach((element, index) => {xorArray[index] = element ? 1 : 0;});
 		return xorArray.join('');

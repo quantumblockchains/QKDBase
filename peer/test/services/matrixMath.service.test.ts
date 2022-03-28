@@ -6,8 +6,8 @@ const {
 	compareToeplitzMatrixes,
 	generateToeplitzMatrix,
 	convertStringToBinary,
-	calculateModuloFromMatrixElements,
-	toeplitzMatrixToVector
+	toeplitzMatrixToVector,
+	calculateModuloFromVectorElements
 } = matrixMathService();
 
 describe('Checks if object is Toeplitz matrix',() => {
@@ -101,19 +101,19 @@ describe('Converts string to binary', () => {
 describe('Calculate Modulo From Matrix Elements', () => {
 	test('Empty string should throw an error ', () => {
 		expect(() => {
-			calculateModuloFromMatrixElements(matrix([]));}).toThrow;
+			calculateModuloFromVectorElements(matrix([]));}).toThrow;
 	});
 	test('Array filled with number 1 should be unaffected', () => {
 		const length = 10;
 		const testVector = Array(length).fill(1);
-		const modulo = calculateModuloFromMatrixElements(matrix(testVector));
+		const modulo = calculateModuloFromVectorElements(matrix(testVector));
 		expect(modulo.toArray()).toStrictEqual(testVector);
 	});
 	test('Array filled with number 2 should be converted to array of zeros', () => {
 		const length = 10;
 		const testVector = Array(length).fill(2);
 		const zerosVector = Array(length).fill(0);
-		const modulo = calculateModuloFromMatrixElements(matrix(testVector));
+		const modulo = calculateModuloFromVectorElements(matrix(testVector));
 		expect(modulo.toArray()).toStrictEqual(zerosVector);
 	});
 });
