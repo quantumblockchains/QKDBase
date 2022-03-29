@@ -181,9 +181,11 @@ export const getQKDKey = async (keyLength: number) => {
 			}
 		});
 		const body = response.body as QKDGetKeyResponse;
+		const key_ID = body.keys[0].key_ID;
+		log('\x1b[32m' + 'QKD key received. Key ID: ' + String(key_ID) + '\x1b[0m');
 		return {
 			key: body.keys[0].key,
-			keyId: body.keys[0].key_ID
+			keyId: key_ID 
 		};
 	}
 };
@@ -228,9 +230,11 @@ export const getQKDKeyById = async (keyId: string) => {
 				certificate: fs.readFileSync(path.join(__dirname, '../certs/clientB.crt'))
 			}
 		});
+		const key_ID = body.keys[0].key_ID;
+		log('\x1b[32m' + 'QKD key received. Key ID: ' + String(key_ID) + '\x1b[0m');
 		return {
 			key: body.keys[0].key,
-			keyId: body.keys[0].key_ID
+			keyId: key_ID
 		};
 	}
 };
