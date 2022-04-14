@@ -34,9 +34,6 @@ services:
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
       - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
       - QRNG_GET_RANDOM_ARRAY_API_KEY=9627fecf-f335-41b3-9560-82875c80afe9
-      # In order to use QKD uncomment comments with QKD URLs
-      # - QKD_GET_KEY_URL=https://122.166.172.56:9090/api/v1/keys/quantumblockchains/enc_keys
-      # - QKD_GET_KEY_BY_ID_URL=https://122.166.172.56:9091/api/v1/keys/quantumblockchains/dec_keys
     container_name: peer_1
   peer_2:
     image: peer
@@ -52,9 +49,6 @@ services:
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
       - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
       - QRNG_GET_RANDOM_ARRAY_API_KEY=9627fecf-f335-41b3-9560-82875c80afe9
-      # In order to use QKD uncomment comments with QKD URLs
-      # - QKD_GET_KEY_URL=https://122.166.172.56:9090/api/v1/keys/quantumblockchains/enc_keys
-      # - QKD_GET_KEY_BY_ID_URL=https://122.166.172.56:9091/api/v1/keys/quantumblockchains/dec_keys
     container_name: peer_2
   peer_3:
     image: peer
@@ -71,9 +65,6 @@ services:
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
       - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
       - QRNG_GET_RANDOM_ARRAY_API_KEY=9627fecf-f335-41b3-9560-82875c80afe9
-      # In order to use QKD uncomment comments with QKD URLs
-      # - QKD_GET_KEY_URL=https://122.166.172.56:9090/api/v1/keys/quantumblockchains/enc_keys
-      # - QKD_GET_KEY_BY_ID_URL=https://122.166.172.56:9091/api/v1/keys/quantumblockchains/dec_keys
     container_name: peer_3
   peer_4:
     image: peer
@@ -91,7 +82,4 @@ services:
       - BOOTSTRAP_NODE_ADDRESS=http://bootstrap_node:3010
       - QRNG_GET_RANDOM_ARRAY_URL=https://qrng.qbck.io
       - QRNG_GET_RANDOM_ARRAY_API_KEY=9627fecf-f335-41b3-9560-82875c80afe9
-      # In order to use QKD uncomment comments with QKD URLs
-      # - QKD_GET_KEY_URL=https://122.166.172.56:9090/api/v1/keys/quantumblockchains/enc_keys
-      # - QKD_GET_KEY_BY_ID_URL=https://122.166.172.56:9091/api/v1/keys/quantumblockchains/dec_keys
     container_name: peer_4
