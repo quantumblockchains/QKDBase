@@ -248,7 +248,7 @@ export const getQRNGRandomArray = async ({
 	const url = process.env.QRNG_GET_RANDOM_ARRAY_URL;
 	const apiKey = process.env.QRNG_GET_RANDOM_ARRAY_API_KEY;
 	if (url) {
-		const urlWithParams = `${url}/${apiKey}/block/short?size=${length}&min=${min}&max=${max}`;
+		const urlWithParams = `${url}/${apiKey}/qbck/block/short?size=${length}&min=${min}&max=${max}`;
 		const { body } = await got.get(
 			urlWithParams, 
 			{
