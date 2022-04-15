@@ -1,7 +1,9 @@
 # Quantum Blockchain
 
 Quantum Blockchain is MVP based on the whitepaper: https://www.mdpi.com/1099-4300/21/9/887.
-The Repository consists of two parts. The first one is implementation of the consensus with specific assumptions. It is based on 4 peers and 1 client which sends transactions to peers. Both client and peers are closed in docker containers and communicate with each other using REST requests. Each peer has 2 ports open for communication simulating normal channel and quantum channel. The second part is visualisation of how consensus works. It is based on simple JS, CSS and HTML.
+The Repository consists of two parts. The first one is implementation of the consensus with specific assumptions. It is based on 4 peers and 1 client which sends transactions to peers. Both client and peers are closed in docker containers and communicate with each other using REST requests. Each peer has 2 ports open for communication simulating normal channel and quantum channel. 
+The QKD based Quantum Channels were implemented using QNU Labs Armor QKD devices.
+
 
 #### Required software:
 
